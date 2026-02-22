@@ -12,10 +12,10 @@ const data = {
     email: 'minullokuliyana@hotmail.com',
     mobile: '+61 402 528 040',
     linkedin: 'https://linkedin.com/in/minull',
-    github: 'https://github.com/minull',
+    github: 'https://github.com/Mainulll',
   },
   summary: `Analytically driven early-career professional with cross-industry experience spanning consumer technology, manufacturing, SaaS, and academic research. Adept at synthesising complex data into structured recommendations, engaging stakeholders at all seniority levels, and delivering measurable impact through a combination of technical rigour and strong interpersonal skills. Targeting graduate roles in consulting, strategy, and analytics.`,
-  message: `Dual-degree candidate at Monash University — Business Analytics and Cybersecurity. Across five industries, I transform complex operational challenges into structured insights, automation solutions, and stakeholder-aligned recommendations that deliver measurable commercial impact.`,
+  message: `Across five industries, I've transformed complex operational challenges into structured insights, automation solutions, and stakeholder-aligned recommendations that deliver measurable commercial impact.`,
   industries: [
     'Consumer Technology',
     'Power & Manufacturing',
@@ -246,15 +246,38 @@ function DotGrid() {
 
     const onMove = e => { mouse.x = e.clientX; mouse.y = e.clientY }
 
+    // Pause rAF when tab is hidden — saves CPU/battery
+    const onVisible = () => {
+      if (document.hidden) { cancelAnimationFrame(raf); raf = null }
+      else if (!raf) draw()
+    }
+
+    const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     resize()
-    draw()
+    if (noMotion) {
+      // Static single frame — no animation loop
+      ctx.beginPath()
+      ctx.fillStyle = 'rgba(165, 168, 255, 0.13)'
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          ctx.moveTo(i * SPACING + BASE_R, j * SPACING)
+          ctx.arc(i * SPACING, j * SPACING, BASE_R, 0, Math.PI * 2)
+        }
+      }
+      ctx.fill()
+    } else {
+      draw()
+    }
+
     window.addEventListener('resize', resize, { passive: true })
     if (!isTouch) window.addEventListener('mousemove', onMove, { passive: true })
+    document.addEventListener('visibilitychange', onVisible)
 
     return () => {
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', resize)
       if (!isTouch) window.removeEventListener('mousemove', onMove)
+      document.removeEventListener('visibilitychange', onVisible)
     }
   }, [])
 
@@ -514,7 +537,7 @@ function SectionLabel({ children }) {
   )
 }
 
-/* ── Download icon ───────────────────────────────────────────────────── */
+/* ── Icons ───────────────────────────────────────────────────────────── */
 function IconDownload() {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -522,11 +545,28 @@ function IconDownload() {
     </svg>
   )
 }
+function IconPhone() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M2 1.5h3.5l1.5 3.5-2 1.2a9 9 0 004.3 4.3l1.2-2L14 10v3.5a1.5 1.5 0 01-1.5 1.5A13.5 13.5 0 01.5 3 1.5 1.5 0 012 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+    </svg>
+  )
+}
+function IconMail() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <rect x="1" y="3" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.3" />
+      <path d="M1 5.5l7 4.5 7-4.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 /* ── App ─────────────────────────────────────────────────────────────── */
 function App() {
   const [loaded, setLoaded] = useState(false)
-  const containerRef = useRef(null)
+  const [contactExpanded, setContactExpanded] = useState(false)
+  const containerRef   = useRef(null)
+  const contactWrapRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] })
   const heroScale   = useTransform(scrollYProgress, [0, 0.12], [1, 0.94])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0])
@@ -537,10 +577,15 @@ function App() {
     return () => clearTimeout(t)
   }, [])
 
-  const scrollToContact = e => {
-    e.preventDefault()
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  // Collapse contact split when clicking outside
+  useEffect(() => {
+    if (!contactExpanded) return
+    const handler = e => {
+      if (!contactWrapRef.current?.contains(e.target)) setContactExpanded(false)
+    }
+    document.addEventListener('pointerdown', handler)
+    return () => document.removeEventListener('pointerdown', handler)
+  }, [contactExpanded])
 
   return (
     <>
@@ -602,6 +647,7 @@ function App() {
             <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 3.25, duration: 0.5 }} className="hero-cta-row">
               <motion.a
+                layout
                 href={data.resumePdf}
                 download="Minul_Lokuliyana_Resume.pdf"
                 className="cta-primary"
@@ -612,16 +658,58 @@ function App() {
                 <IconDownload />
                 Download Resume
               </motion.a>
-              <motion.a
-                href="#contact"
-                onClick={scrollToContact}
-                className="cta-secondary"
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: 'spring', stiffness: 380, damping: 20 }}
-              >
-                Contact Me
-              </motion.a>
+
+              {/* Contact Me — splits into Mobile + Email on click */}
+              <div ref={contactWrapRef} className="contact-wrap">
+                <AnimatePresence mode="wait">
+                  {!contactExpanded ? (
+                    <motion.button
+                      key="contact-closed"
+                      className="cta-secondary"
+                      onClick={() => setContactExpanded(true)}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, scale: 0.88, transition: { duration: 0.14 } }}
+                      whileHover={{ scale: 1.04, y: -2 }}
+                      whileTap={{ scale: 0.96 }}
+                      transition={{ type: 'spring', stiffness: 380, damping: 20 }}
+                    >
+                      Contact Me
+                    </motion.button>
+                  ) : (
+                    <motion.div
+                      key="contact-open"
+                      className="contact-split"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.12 } }}
+                    >
+                      <motion.a
+                        href={`tel:${data.contact.mobile}`}
+                        className="contact-option"
+                        initial={{ opacity: 0, x: -12, scale: 0.88 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 24 }}
+                        whileHover={{ scale: 1.06, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <IconPhone /> Mobile
+                      </motion.a>
+                      <motion.a
+                        href={`mailto:${data.contact.email}`}
+                        className="contact-option"
+                        initial={{ opacity: 0, x: 12, scale: 0.88 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 24, delay: 0.06 }}
+                        whileHover={{ scale: 1.06, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <IconMail /> Email
+                      </motion.a>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </motion.div>
 
             {/* Secondary links */}
@@ -806,7 +894,7 @@ function App() {
 
         <style>{`
           /* ── Global ──────────────────────────────────────────────── */
-          html { scroll-padding-top: 56px; }
+          html { scroll-padding-top: 56px; scrollbar-gutter: stable; }
 
           /* ── Base ────────────────────────────────────────────────── */
           .app {
@@ -961,6 +1049,21 @@ function App() {
             transition: background 0.2s, border-color 0.2s, color 0.2s;
           }
           .cta-secondary:hover { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.28); color: rgba(185,188,255,0.9); }
+
+          /* Contact split */
+          .contact-wrap { display: inline-flex; }
+          .contact-split { display: flex; gap: 0.5rem; align-items: center; }
+          .contact-option {
+            display: inline-flex; align-items: center; gap: 0.42rem;
+            padding: 0.58rem 1.1rem;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 0.5px solid rgba(255,255,255,0.12); border-radius: 100px;
+            color: rgba(200,202,250,0.7); font-size: 0.84rem; font-weight: 500;
+            text-decoration: none; min-height: 44px; white-space: nowrap;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+          }
+          .contact-option:hover { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.28); color: rgba(185,188,255,0.9); }
 
           .hero-nav { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2.6rem; justify-content: center; }
 
