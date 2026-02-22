@@ -387,12 +387,14 @@ function Navbar() {
             transition={{ duration: 0.32, ease }}
             aria-label="Page navigation"
           >
-            {NAV_LINKS.map(l => (
-              <a key={l.label} href={l.href} onClick={e => scrollTo(e, l.href)}
-                className={`nav-link${active === l.href.slice(1) ? ' nav-active' : ''}`}>
-                {l.label}
-              </a>
-            ))}
+            <div className="site-nav-pill">
+              {NAV_LINKS.map(l => (
+                <a key={l.label} href={l.href} onClick={e => scrollTo(e, l.href)}
+                  className={`nav-link${active === l.href.slice(1) ? ' nav-active' : ''}`}>
+                  {l.label}
+                </a>
+              ))}
+            </div>
           </motion.nav>
 
           <motion.button ref={fabRef} className="nav-fab"
@@ -444,60 +446,41 @@ function Navbar() {
 function LoadingScreen() {
   return (
     <motion.div className="loading-screen"
-      exit={{ opacity: 0, scale: 1.05, filter: 'blur(12px)' }}
-      transition={{ duration: 0.6, ease }}
+      exit={{ opacity: 0, transition: { duration: 0.55, ease } }}
     >
+      {/* Gem — blurs / scales on exit, name is intentionally outside */}
       <motion.div className="loading-inner"
         initial={{ opacity: 0, scale: 0.88, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 1.08, filter: 'blur(16px)', transition: { duration: 0.45, ease } }}
         transition={{ duration: 0.7, ease }}
       >
         <div className="loading-gem-wrap">
           <LogoMark size={88} float />
         </div>
-        <motion.p className="loading-name"
-          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.55, duration: 0.65, ease }}
-        >
-          Minul Lokuliyana
-        </motion.p>
-        <motion.p className="loading-sub"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ delay: 0.85, duration: 0.55 }}
-        >
-          {data.tagline}
-        </motion.p>
       </motion.div>
+
+      {/* Name — sits between gem and tagline; layoutId transitions it to hero on exit */}
+      <motion.p className="loading-name"
+        layoutId="ml-name"
+        initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.55, duration: 0.65, ease }}
+      >
+        {data.name}
+      </motion.p>
+
+      {/* Tagline — fades + blurs separately */}
+      <motion.p className="loading-sub"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+        exit={{ opacity: 0, y: -6, filter: 'blur(6px)', transition: { duration: 0.3 } }}
+        transition={{ delay: 0.85, duration: 0.55 }}
+      >
+        {data.tagline}
+      </motion.p>
     </motion.div>
   )
 }
 
-/* ── Typewriter ──────────────────────────────────────────────────────── */
-function Typewriter({ text, speed = 70, delay = 500 }) {
-  const [display, setDisplay] = useState('')
-  const [done, setDone] = useState(false)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      let i = 0
-      const type = () => {
-        if (i < text.length) { setDisplay(text.slice(0, i + 1)); i++; setTimeout(type, speed) }
-        else setDone(true)
-      }
-      type()
-    }, delay)
-    return () => clearTimeout(timer)
-  }, [text, speed, delay])
-  return (
-    <span>
-      {display}
-      {!done && (
-        <motion.span animate={{ opacity: [1, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-          className="cursor-blink">|</motion.span>
-      )}
-    </span>
-  )
-}
 
 /* ── Cursor Glow ─────────────────────────────────────────────────────── */
 function CursorGlow() {
@@ -622,9 +605,13 @@ function App() {
               {data.location}
             </motion.p>
 
-            <h1 className="hero-name">
-              <Typewriter text={data.name} speed={65} delay={600} />
-            </h1>
+            {/* Name: invisible placeholder during loading; motion.h1 with layoutId after — framer-motion
+                transitions it from its loading-screen position to here */}
+            {loaded
+              ? <motion.h1 className="hero-name" layoutId="ml-name" initial={false}
+                  transition={{ type: 'spring', stiffness: 72, damping: 18, mass: 1.1 }}>{data.name}</motion.h1>
+              : <h1 className="hero-name" style={{ opacity: 0 }} aria-hidden="true">{data.name}</h1>
+            }
 
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2.7, duration: 0.6 }} className="hero-role-pill">
@@ -920,25 +907,31 @@ function App() {
           /* ── Loading Screen ──────────────────────────────────────── */
           .loading-screen {
             position: fixed; inset: 0; z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.55rem;
             background: #06060f;
           }
-          .loading-inner { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
+          .loading-inner { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.1rem; }
           .loading-gem-wrap {
             position: relative; display: inline-flex; align-items: center; justify-content: center;
             filter: drop-shadow(0 4px 20px rgba(99,102,241,0.42)) drop-shadow(0 0 44px rgba(129,140,248,0.2));
           }
-          .loading-name { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.02em; color: rgba(228,228,245,0.88); margin-top: 0.2rem; }
-          .loading-sub { font-size: 0.71rem; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(129,140,248,0.44); margin-top: -0.4rem; }
+          .loading-name { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.02em; color: rgba(228,228,245,0.88); }
+          .loading-sub { font-size: 0.71rem; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(129,140,248,0.44); }
 
           /* ── Navbar — desktop pill ───────────────────────────────── */
+          /* Full-width track; justify-content centres the pill regardless of scrollbar gutter */
           .site-nav {
-            position: fixed; top: 48px; left: 50%; transform: translateX(-50%);
+            position: fixed; top: 48px; left: 0; right: 0;
+            display: flex; justify-content: center;
+            pointer-events: none; z-index: 150;
+          }
+          .site-nav-pill {
             display: flex; gap: 0.1rem; padding: 0.3rem;
+            pointer-events: auto; white-space: nowrap;
             background: rgba(6,6,18,0.8);
             backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
             border: 0.5px solid rgba(255,255,255,0.08); border-radius: 100px;
-            z-index: 150; white-space: nowrap;
             box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 24px rgba(0,0,0,0.3);
           }
           .nav-link { padding: 0.38rem 0.88rem; border-radius: 100px; font-size: 0.77rem; font-weight: 500; color: rgba(170,174,228,0.5); text-decoration: none; transition: color 0.18s, background 0.18s; }
