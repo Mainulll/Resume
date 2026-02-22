@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useId } from 'react'
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
+import { Analytics } from '@vercel/analytics/react'
 
 const data = {
   name: 'Minul Lokuliyana',
@@ -1147,7 +1148,7 @@ function App() {
           .cert-pill { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.09); color: rgba(195,195,235,0.66); padding: 0.56rem 1.25rem; border-radius: 100px; font-size: 0.85rem; font-weight: 500; transition: border-color 0.2s, background 0.2s, color 0.2s; }
           .cert-pill:hover { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.24); color: rgba(185,188,255,0.86); }
 
-          /* ── Footer ──────────────────────────────────────────────── */
+          /* ── Footer ──────────────────���───────────────────────────── */
           .footer { padding: 2rem 2rem 5rem; margin-top: 1rem; }
           .footer-glass { max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.03); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 2.4rem 2rem; text-align: center; box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 24px 52px rgba(0,0,0,0.32); }
           .footer-logo { display: flex; align-items: center; justify-content: center; gap: 0.55rem; margin-bottom: 1rem; }
@@ -1212,6 +1213,7 @@ function App() {
           }
         `}</style>
       </div>
+      <Analytics />
     </>
   )
 }
