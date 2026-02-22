@@ -3,7 +3,9 @@ import { motion, AnimatePresence, useInView, useScroll, useTransform, useMotionV
 
 const data = {
   name: 'Minul Lokuliyana',
-  title: 'Supply Chain @ BSH Group | Final Year Business Analytics & Cybersecurity @ Monash',
+  // Note: place your PDF at /public/resume.pdf for the download button
+  resumePdf: '/resume.pdf',
+  title: 'Business Analytics & Cybersecurity · Monash University',
   tagline: 'Automation · Perspective · Transformation',
   location: 'Melbourne, VIC',
   contact: {
@@ -12,8 +14,8 @@ const data = {
     linkedin: 'https://linkedin.com/in/minull',
     github: 'https://github.com/minull',
   },
-  summary: `Analytically driven early-career professional with cross-industry experience spanning consumer technology, manufacturing (metal fabrication & electrical sub-assemblies), SaaS, and academic research. Adept at synthesising complex data into structured recommendations, managing stakeholders across all seniority levels, and delivering measurable impact through a rare combination of technical rigour and exceptional interpersonal skills. Targeting graduate consulting, strategy, and analyst roles.`,
-  message: `Final year Business Analytics & Cybersecurity student at Monash. Across five industries — I translate operational complexity into clear business impact through structured analysis, automation, and the kind of cross-functional collaboration that actually gets things done.`,
+  summary: `Analytically driven early-career professional with cross-industry experience spanning consumer technology, manufacturing, SaaS, and academic research. Adept at synthesising complex data into structured recommendations, engaging stakeholders at all seniority levels, and delivering measurable impact through a combination of technical rigour and strong interpersonal skills. Targeting graduate roles in consulting, strategy, and analytics.`,
+  message: `Dual-degree candidate at Monash University — Business Analytics and Cybersecurity. Across five industries, I transform complex operational challenges into structured insights, automation solutions, and stakeholder-aligned recommendations that deliver measurable commercial impact.`,
   industries: [
     'Consumer Technology',
     'Power & Manufacturing',
@@ -154,10 +156,114 @@ const NAV_LINKS = [
   { label: 'Contact', href: '#contact' },
 ]
 
+/* ── Dot Grid Background ─────────────────────────────────────────────────
+   Canvas-based interactive dot grid. Mouse proximity displaces dots
+   outward and brightens them. On touch devices renders static dots only.
+   Uses dist² comparison (no sqrt) for the base-dot pass — fast.
+─────────────────────────────────────────────────────────────────────── */
+function DotGrid() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+
+    const SPACING   = 26      // px between dot centres
+    const BASE_R    = 0.85    // base dot radius (px)
+    const INFLUENCE = 150     // mouse influence radius (px)
+    const INF2      = INFLUENCE * INFLUENCE
+    const MAX_PUSH  = 14      // max displacement (px)
+    const LERP      = 0.07    // mouse smoothing (0 = no follow, 1 = instant)
+    const isTouch   = !window.matchMedia('(hover: hover)').matches
+
+    let W, H, cols, rows, raf
+    const mouse  = { x: -9999, y: -9999 }
+    const smooth = { x: -9999, y: -9999 }
+
+    const resize = () => {
+      W = canvas.width  = window.innerWidth
+      H = canvas.height = window.innerHeight
+      cols = Math.ceil(W / SPACING) + 2
+      rows = Math.ceil(H / SPACING) + 2
+    }
+
+    const draw = () => {
+      smooth.x += (mouse.x - smooth.x) * LERP
+      smooth.y += (mouse.y - smooth.y) * LERP
+      ctx.clearRect(0, 0, W, H)
+
+      /* Pass 1 — base dots outside influence zone (single path → single fill) */
+      ctx.beginPath()
+      ctx.fillStyle = 'rgba(165, 168, 255, 0.13)'
+      for (let i = 0; i < cols; i++) {
+        for (let j = 0; j < rows; j++) {
+          const bx = i * SPACING
+          const by = j * SPACING
+          const dx = bx - smooth.x
+          const dy = by - smooth.y
+          if (isTouch || dx * dx + dy * dy >= INF2) {
+            ctx.moveTo(bx + BASE_R, by)
+            ctx.arc(bx, by, BASE_R, 0, Math.PI * 2)
+          }
+        }
+      }
+      ctx.fill()
+
+      /* Pass 2 — influenced dots (displaced + brightened), bounding-box bounded */
+      if (!isTouch) {
+        const minI = Math.max(0, Math.floor((smooth.x - INFLUENCE) / SPACING))
+        const maxI = Math.min(cols - 1, Math.ceil((smooth.x + INFLUENCE) / SPACING))
+        const minJ = Math.max(0, Math.floor((smooth.y - INFLUENCE) / SPACING))
+        const maxJ = Math.min(rows - 1, Math.ceil((smooth.y + INFLUENCE) / SPACING))
+
+        for (let i = minI; i <= maxI; i++) {
+          for (let j = minJ; j <= maxJ; j++) {
+            const bx = i * SPACING
+            const by = j * SPACING
+            const dx = bx - smooth.x
+            const dy = by - smooth.y
+            const dist2 = dx * dx + dy * dy
+            if (dist2 < INF2) {
+              const dist  = Math.sqrt(dist2)
+              const ratio = 1 - dist / INFLUENCE
+              const force = ratio * ratio * MAX_PUSH
+              const angle = Math.atan2(dy, dx)
+              const px    = bx + Math.cos(angle) * force
+              const py    = by + Math.sin(angle) * force
+              const alpha = (0.13 + ratio * 0.52).toFixed(2)
+              const r     = BASE_R + ratio * 0.5
+              ctx.beginPath()
+              ctx.arc(px, py, r, 0, Math.PI * 2)
+              ctx.fillStyle = `rgba(165, 168, 255, ${alpha})`
+              ctx.fill()
+            }
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(draw)
+    }
+
+    const onMove = e => { mouse.x = e.clientX; mouse.y = e.clientY }
+
+    resize()
+    draw()
+    window.addEventListener('resize', resize, { passive: true })
+    if (!isTouch) window.addEventListener('mousemove', onMove, { passive: true })
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', resize)
+      if (!isTouch) window.removeEventListener('mousemove', onMove)
+    }
+  }, [])
+
+  return <canvas ref={canvasRef} className="dot-grid" aria-hidden="true" />
+}
+
 /* ── Logo Mark ───────────────────────────────────────────────────────────
    SVG diamond gem — four-facet design in indigo/violet palette.
    useId() scopes gradient IDs per instance (avoids SVG ID collisions).
-   float=true adds a gentle framer-motion y-oscillation.
 ─────────────────────────────────────────────────────────────────────── */
 function LogoMark({ size = 60, float = false, className = '' }) {
   const uid = useId().replace(/:/g, '_')
@@ -193,37 +299,27 @@ function LogoMark({ size = 60, float = false, className = '' }) {
           <stop offset="100%" stopColor="#1e1b4b" />
         </linearGradient>
       </defs>
-      {/* Crown-left — catches the "light" */}
-      <polygon points="24,2 4,22 24,27" fill={`url(#${uid}a)`} />
-      {/* Crown-right */}
+      <polygon points="24,2 4,22 24,27"  fill={`url(#${uid}a)`} />
       <polygon points="24,2 24,27 44,22" fill={`url(#${uid}b)`} opacity="0.88" />
-      {/* Pavilion-left */}
-      <polygon points="4,22 24,27 24,54" fill={`url(#${uid}c)`} opacity="0.94" />
-      {/* Pavilion-right — deepest shadow */}
+      <polygon points="4,22 24,27 24,54"  fill={`url(#${uid}c)`} opacity="0.94" />
       <polygon points="24,27 44,22 24,54" fill={`url(#${uid}d)`} />
-      {/* Structural lines */}
       <polygon points="24,2 44,22 24,54 4,22" fill="none" stroke="rgba(165,180,252,0.28)" strokeWidth="0.6" strokeLinejoin="round" />
       <line x1="4" y1="22" x2="44" y2="22" stroke="rgba(165,180,252,0.16)" strokeWidth="0.5" />
       <line x1="24" y1="2" x2="24" y2="54" stroke="rgba(165,180,252,0.07)" strokeWidth="0.5" />
       <line x1="4" y1="22" x2="24" y2="27" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
       <line x1="44" y1="22" x2="24" y2="27" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-      {/* Specular highlight */}
       <polygon points="24,2 4,22 14,12" fill="rgba(255,255,255,0.14)" />
     </motion.svg>
   )
 }
 
-/* ── Navbar ──────────────────────────────────────────────────────────────
-   Appears after scrolling 80px. Desktop: floating glass pill centred
-   below the banner. Mobile: circular FAB (bottom-right) + glass dropdown.
-   IntersectionObserver highlights the active section link.
-─────────────────────────────────────────────────────────────────────── */
+/* ── Navbar ──────────────────────────────────────────────────────────── */
 function Navbar() {
   const [active, setActive] = useState('')
   const [mobileOpen, setMobileOpen] = useState(false)
   const [visible, setVisible] = useState(false)
   const menuRef = useRef(null)
-  const fabRef = useRef(null)
+  const fabRef  = useRef(null)
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > 80)
@@ -240,7 +336,6 @@ function Navbar() {
     return () => obs.disconnect()
   }, [])
 
-  // Close mobile menu on outside tap
   useEffect(() => {
     if (!mobileOpen) return
     const handler = e => {
@@ -261,7 +356,6 @@ function Navbar() {
     <AnimatePresence>
       {visible && (
         <>
-          {/* Desktop: glass pill */}
           <motion.nav
             className="site-nav"
             initial={{ opacity: 0, y: -10 }}
@@ -271,27 +365,18 @@ function Navbar() {
             aria-label="Page navigation"
           >
             {NAV_LINKS.map(l => (
-              <a
-                key={l.label}
-                href={l.href}
-                onClick={e => scrollTo(e, l.href)}
-                className={`nav-link${active === l.href.slice(1) ? ' nav-active' : ''}`}
-              >
+              <a key={l.label} href={l.href} onClick={e => scrollTo(e, l.href)}
+                className={`nav-link${active === l.href.slice(1) ? ' nav-active' : ''}`}>
                 {l.label}
               </a>
             ))}
           </motion.nav>
 
-          {/* Mobile: FAB */}
-          <motion.button
-            ref={fabRef}
-            className="nav-fab"
+          <motion.button ref={fabRef} className="nav-fab"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
             onClick={() => setMobileOpen(v => !v)}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            whileTap={{ scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }} whileTap={{ scale: 0.9 }}
             transition={{ duration: 0.25, ease }}
           >
             <svg width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
@@ -310,24 +395,15 @@ function Navbar() {
             </svg>
           </motion.button>
 
-          {/* Mobile: dropdown */}
           <AnimatePresence>
             {mobileOpen && (
-              <motion.div
-                ref={menuRef}
-                className="nav-mobile-menu"
-                initial={{ opacity: 0, y: 10, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.96 }}
-                transition={{ duration: 0.2, ease }}
+              <motion.div ref={menuRef} className="nav-mobile-menu"
+                initial={{ opacity: 0, y: 10, scale: 0.96 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.96 }} transition={{ duration: 0.2, ease }}
               >
                 {NAV_LINKS.map(l => (
-                  <a
-                    key={l.label}
-                    href={l.href}
-                    onClick={e => scrollTo(e, l.href)}
-                    className={`nav-mobile-link${active === l.href.slice(1) ? ' nav-active' : ''}`}
-                  >
+                  <a key={l.label} href={l.href} onClick={e => scrollTo(e, l.href)}
+                    className={`nav-mobile-link${active === l.href.slice(1) ? ' nav-active' : ''}`}>
                     <span>{l.label}</span>
                     <span className="nav-arrow">›</span>
                   </a>
@@ -344,13 +420,11 @@ function Navbar() {
 /* ── Loading Screen ──────────────────────────────────────────────────── */
 function LoadingScreen() {
   return (
-    <motion.div
-      className="loading-screen"
+    <motion.div className="loading-screen"
       exit={{ opacity: 0, scale: 1.05, filter: 'blur(12px)' }}
       transition={{ duration: 0.6, ease }}
     >
-      <motion.div
-        className="loading-inner"
+      <motion.div className="loading-inner"
         initial={{ opacity: 0, scale: 0.88, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.7, ease }}
@@ -358,18 +432,14 @@ function LoadingScreen() {
         <div className="loading-gem-wrap">
           <LogoMark size={88} float />
         </div>
-        <motion.p
-          className="loading-name"
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
+        <motion.p className="loading-name"
+          initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.55, duration: 0.65, ease }}
         >
           Minul Lokuliyana
         </motion.p>
-        <motion.p
-          className="loading-sub"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+        <motion.p className="loading-sub"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           transition={{ delay: 0.85, duration: 0.55 }}
         >
           {data.tagline}
@@ -383,35 +453,24 @@ function LoadingScreen() {
 function Typewriter({ text, speed = 70, delay = 500 }) {
   const [display, setDisplay] = useState('')
   const [done, setDone] = useState(false)
-
   useEffect(() => {
     const timer = setTimeout(() => {
       let i = 0
       const type = () => {
-        if (i < text.length) {
-          setDisplay(text.slice(0, i + 1))
-          i++
-          setTimeout(type, speed)
-        } else {
-          setDone(true)
-        }
+        if (i < text.length) { setDisplay(text.slice(0, i + 1)); i++; setTimeout(type, speed) }
+        else setDone(true)
       }
       type()
     }, delay)
     return () => clearTimeout(timer)
   }, [text, speed, delay])
-
   return (
     <span>
       {display}
       {!done && (
-        <motion.span
-          animate={{ opacity: [1, 0] }}
+        <motion.span animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-          className="cursor-blink"
-        >
-          |
-        </motion.span>
+          className="cursor-blink">|</motion.span>
       )}
     </span>
   )
@@ -419,23 +478,15 @@ function Typewriter({ text, speed = 70, delay = 500 }) {
 
 /* ── Cursor Glow ─────────────────────────────────────────────────────── */
 function CursorGlow() {
-  const x = useMotionValue(-300)
-  const y = useMotionValue(-300)
-  const xSpring = useSpring(x, { damping: 28, stiffness: 180 })
-  const ySpring = useSpring(y, { damping: 28, stiffness: 180 })
-
+  const x = useMotionValue(-300); const y = useMotionValue(-300)
+  const xS = useSpring(x, { damping: 28, stiffness: 180 })
+  const yS = useSpring(y, { damping: 28, stiffness: 180 })
   useEffect(() => {
     const move = e => { x.set(e.clientX); y.set(e.clientY) }
     globalThis.addEventListener('mousemove', move)
     return () => globalThis.removeEventListener('mousemove', move)
   }, [x, y])
-
-  return (
-    <motion.div
-      className="cursor-glow"
-      style={{ left: xSpring, top: ySpring, x: '-50%', y: '-50%' }}
-    />
-  )
+  return <motion.div className="cursor-glow" style={{ left: xS, top: yS, x: '-50%', y: '-50%' }} />
 }
 
 /* ── Section ─────────────────────────────────────────────────────────── */
@@ -443,9 +494,7 @@ function Section({ children, className = '', id }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-60px' })
   return (
-    <motion.section
-      ref={ref}
-      id={id}
+    <motion.section ref={ref} id={id}
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.7, ease }}
@@ -465,19 +514,33 @@ function SectionLabel({ children }) {
   )
 }
 
+/* ── Download icon ───────────────────────────────────────────────────── */
+function IconDownload() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 /* ── App ─────────────────────────────────────────────────────────────── */
 function App() {
   const [loaded, setLoaded] = useState(false)
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: containerRef, offset: ['start start', 'end end'] })
-  const heroScale = useTransform(scrollYProgress, [0, 0.12], [1, 0.94])
+  const heroScale   = useTransform(scrollYProgress, [0, 0.12], [1, 0.94])
   const heroOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0])
-  const parallaxY = useTransform(scrollYProgress, [0, 0.25], [0, 60])
+  const parallaxY   = useTransform(scrollYProgress, [0, 0.25], [0, 60])
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 2400)
     return () => clearTimeout(t)
   }, [])
+
+  const scrollToContact = e => {
+    e.preventDefault()
+    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   return (
     <>
@@ -487,16 +550,14 @@ function App() {
 
       <div ref={containerRef} className="app">
 
+        <DotGrid />
         <motion.div className="scroll-progress" style={{ scaleX: scrollYProgress }} />
         <CursorGlow />
         <Navbar />
 
         {/* Open-to banner */}
-        <motion.a
-          href={`mailto:${data.contact.email}`}
-          className="open-banner"
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
+        <motion.a href={`mailto:${data.contact.email}`} className="open-banner"
+          initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.6 }}
         >
           <span className="banner-dot" />
@@ -508,15 +569,11 @@ function App() {
           <div className="hero-orb orb-1" />
           <div className="hero-orb orb-2" />
           <div className="hero-orb orb-3" />
-          <div className="hero-orb orb-4" />
 
           <motion.div style={{ y: parallaxY }} className="hero-content">
-            <motion.p
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="hero-eyebrow"
-            >
+
+            <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.6 }} className="hero-eyebrow">
               {data.location}
             </motion.p>
 
@@ -524,55 +581,62 @@ function App() {
               <Typewriter text={data.name} speed={65} delay={600} />
             </h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.7, duration: 0.6 }}
-              className="hero-role-pill"
-            >
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.7, duration: 0.6 }} className="hero-role-pill">
               {data.title}
             </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 3.0 }}
-              className="hero-summary"
-            >
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 3.0 }} className="hero-summary">
               {data.message}
             </motion.p>
 
-            {/* Industry breadth tags */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 3.15 }}
-              className="hero-industries"
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 3.15 }} className="hero-industries">
               {data.industries.map(ind => (
                 <span key={ind} className="industry-tag">{ind}</span>
               ))}
             </motion.div>
 
-            <motion.nav
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 3.3 }}
-              className="hero-nav"
-            >
+            {/* Primary CTAs */}
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3.25, duration: 0.5 }} className="hero-cta-row">
+              <motion.a
+                href={data.resumePdf}
+                download="Minul_Lokuliyana_Resume.pdf"
+                className="cta-primary"
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 20 }}
+              >
+                <IconDownload />
+                Download Resume
+              </motion.a>
+              <motion.a
+                href="#contact"
+                onClick={scrollToContact}
+                className="cta-secondary"
+                whileHover={{ scale: 1.04, y: -2 }}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: 'spring', stiffness: 380, damping: 20 }}
+              >
+                Contact Me
+              </motion.a>
+            </motion.div>
+
+            {/* Secondary links */}
+            <motion.nav initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 3.4 }} className="hero-nav">
               {[
                 { label: 'LinkedIn', href: data.contact.linkedin, external: true },
-                { label: 'GitHub', href: data.contact.github, external: true },
-                { label: 'Email', href: `mailto:${data.contact.email}`, external: false },
+                { label: 'GitHub',   href: data.contact.github,   external: true },
+                { label: 'Email',    href: `mailto:${data.contact.email}`, external: false },
               ].map(item => (
-                <motion.a
-                  key={item.label}
-                  href={item.href}
+                <motion.a key={item.label} href={item.href}
                   target={item.external ? '_blank' : undefined}
                   rel={item.external ? 'noopener noreferrer' : undefined}
                   className="glass-btn"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 380, damping: 20 }}
                 >
                   {item.label}
@@ -580,19 +644,14 @@ function App() {
               ))}
             </motion.nav>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 3.55 }}
-              className="scroll-hint"
-            >
-              <motion.div
-                className="scroll-line"
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+              transition={{ delay: 3.6 }} className="scroll-hint">
+              <motion.div className="scroll-line"
                 animate={{ scaleY: [0.4, 1, 0.4] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              />
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }} />
               Scroll to explore
             </motion.div>
+
           </motion.div>
         </motion.header>
 
@@ -605,24 +664,15 @@ function App() {
           <motion.p variants={fadeUp} initial="initial" whileInView="animate" viewport={{ once: true }} className="section-sub">
             {data.sectionSubtext.experience}
           </motion.p>
-
           <div className="timeline">
             {data.experience.map((exp, i) => (
-              <motion.div
-                key={exp.company}
-                variants={fadeUp}
-                initial="initial"
-                whileInView="animate"
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.07, duration: 0.6, ease }}
-                className="timeline-item"
-              >
+              <motion.div key={exp.company} variants={fadeUp} initial="initial" whileInView="animate"
+                viewport={{ once: true }} transition={{ delay: i * 0.07, duration: 0.6, ease }}
+                className="timeline-item">
                 <div className="timeline-dot" />
-                <motion.div
-                  className="glass-card exp-card"
+                <motion.div className="glass-card exp-card"
                   whileHover={{ y: -3, borderColor: 'rgba(129,140,248,0.28)' }}
-                  transition={{ duration: 0.22 }}
-                >
+                  transition={{ duration: 0.22 }}>
                   <div className="exp-top">
                     <div>
                       <div className="exp-role">{exp.role}</div>
@@ -634,9 +684,7 @@ function App() {
                     </div>
                   </div>
                   <ul className="bullet-list">
-                    {exp.highlights.map(h => (
-                      <li key={h}>{h}</li>
-                    ))}
+                    {exp.highlights.map(h => <li key={h}>{h}</li>)}
                   </ul>
                 </motion.div>
               </motion.div>
@@ -655,20 +703,15 @@ function App() {
           </motion.p>
           <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} className="pillars-grid">
             {data.skillPillars.map((pillar, i) => (
-              <motion.div
-                key={pillar.title}
-                variants={fadeUp}
+              <motion.div key={pillar.title} variants={fadeUp}
                 className="glass-card pillar-card"
                 whileHover={{ scale: 1.025, y: -5 }}
-                transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-              >
+                transition={{ type: 'spring', stiffness: 280, damping: 22 }}>
                 <div className="pillar-num">0{i + 1}</div>
                 <h4 className="pillar-title">{pillar.title}</h4>
                 <p className="pillar-sub">{pillar.subtitle}</p>
                 <div className="tag-row">
-                  {pillar.items.map(item => (
-                    <span key={item} className="tag">{item}</span>
-                  ))}
+                  {pillar.items.map(item => <span key={item} className="tag">{item}</span>)}
                 </div>
               </motion.div>
             ))}
@@ -686,26 +729,17 @@ function App() {
           </motion.p>
           <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} className="projects-grid">
             {data.projects.map(proj => (
-              <motion.div
-                key={proj.name}
-                variants={fadeUp}
+              <motion.div key={proj.name} variants={fadeUp}
                 className="glass-card project-card"
-                whileHover={{ y: -6 }}
-                transition={{ duration: 0.25 }}
-              >
+                whileHover={{ y: -6 }} transition={{ duration: 0.25 }}>
                 <div className="project-period">{proj.period}</div>
                 <h4 className="project-name">{proj.name}</h4>
                 <p className="project-subtitle">{proj.subtitle}</p>
                 <p className="project-desc">{proj.description}</p>
                 <p className="project-tech">{proj.tech}</p>
                 {proj.link && (
-                  <motion.a
-                    href={proj.link}
-                    className="project-link"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ x: 4 }}
-                  >
+                  <motion.a href={proj.link} className="project-link"
+                    target="_blank" rel="noopener noreferrer" whileHover={{ x: 4 }}>
                     {proj.linkLabel || 'View project'} →
                   </motion.a>
                 )}
@@ -720,21 +754,14 @@ function App() {
           <motion.h2 variants={fadeUp} initial="initial" whileInView="animate" viewport={{ once: true }} className="section-title">
             Education
           </motion.h2>
-          <motion.div
-            variants={fadeUp}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            className="glass-card edu-card"
-          >
+          <motion.div variants={fadeUp} initial="initial" whileInView="animate" viewport={{ once: true }}
+            className="glass-card edu-card">
             <h4 className="edu-degree">{data.education.degree}</h4>
             <p className="edu-institution">{data.education.institution}</p>
             <p className="edu-majors">{data.education.majors}</p>
             <p className="edu-period">{data.education.period}</p>
             <ul className="bullet-list">
-              {data.education.highlights.map(h => (
-                <li key={h}>{h}</li>
-              ))}
+              {data.education.highlights.map(h => <li key={h}>{h}</li>)}
             </ul>
           </motion.div>
         </Section>
@@ -747,19 +774,15 @@ function App() {
           </motion.h2>
           <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} className="certs-row">
             {data.certifications.map(cert => (
-              <motion.span
-                key={cert}
-                variants={fadeUp}
-                className="cert-pill"
-                whileHover={{ scale: 1.03, borderColor: 'rgba(129,140,248,0.35)' }}
-              >
+              <motion.span key={cert} variants={fadeUp} className="cert-pill"
+                whileHover={{ scale: 1.03, borderColor: 'rgba(129,140,248,0.35)' }}>
                 {cert}
               </motion.span>
             ))}
           </motion.div>
         </Section>
 
-        {/* ── Footer ────────────────────────────────────────────────────── */}
+        {/* ── Footer / Contact ──────────────────────────────────────────── */}
         <footer className="footer" id="contact">
           <div className="footer-glass">
             <div className="footer-logo">
@@ -767,9 +790,14 @@ function App() {
               <span className="footer-logo-name">Minul Lokuliyana</span>
             </div>
             <p className="footer-quote">Always bringing the perspective.</p>
+            <div className="footer-cta-row">
+              <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="footer-download">
+                <IconDownload /> Download Resume
+              </a>
+            </div>
             <nav className="footer-nav">
               <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-              <a href={data.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+              <a href={data.contact.github}   target="_blank" rel="noopener noreferrer">GitHub</a>
               <a href={`mailto:${data.contact.email}`}>Email</a>
             </nav>
             <p className="footer-contact">{data.contact.mobile} · {data.contact.email}</p>
@@ -777,87 +805,67 @@ function App() {
         </footer>
 
         <style>{`
-          /* ── Global ─────────────────────────────────────────────────── */
+          /* ── Global ──────────────────────────────────────────────── */
           html { scroll-padding-top: 56px; }
 
-          /* ── Base ───────────────────────────────────────────────────── */
+          /* ── Base ────────────────────────────────────────────────── */
           .app {
-            position: relative;
-            min-height: 100vh;
+            position: relative; min-height: 100vh;
             background:
-              radial-gradient(ellipse 100% 60% at 50% -8%, rgba(99,102,241,0.26) 0%, transparent 62%),
-              radial-gradient(ellipse 60% 45% at 88% 72%, rgba(139,92,246,0.16) 0%, transparent 55%),
-              radial-gradient(ellipse 50% 35% at 12% 58%, rgba(79,70,229,0.11) 0%, transparent 50%),
-              radial-gradient(ellipse 40% 30% at 55% 90%, rgba(109,40,217,0.09) 0%, transparent 50%),
+              radial-gradient(ellipse 100% 60% at 50% -8%, rgba(99,102,241,0.22) 0%, transparent 62%),
+              radial-gradient(ellipse 60% 45% at 88% 72%, rgba(139,92,246,0.13) 0%, transparent 55%),
+              radial-gradient(ellipse 50% 35% at 12% 58%, rgba(79,70,229,0.09) 0%, transparent 50%),
               #06060f;
             color: #e4e4f0;
           }
 
-          /* ── Logo Mark ──────────────────────────────────────────────── */
+          /* ── Dot Grid ────────────────────────────────────────────── */
+          .dot-grid {
+            position: fixed; inset: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+          }
+
+          /* ── Logo Mark ───────────────────────────────────────────── */
           .logo-mark { display: block; }
 
-          /* ── Loading Screen ─────────────────────────────────────────── */
+          /* ── Loading Screen ──────────────────────────────────────── */
           .loading-screen {
             position: fixed; inset: 0; z-index: 9999;
             display: flex; align-items: center; justify-content: center;
             background: #06060f;
           }
-          .loading-inner {
-            display: flex; flex-direction: column;
-            align-items: center; gap: 1.2rem;
-          }
+          .loading-inner { display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
           .loading-gem-wrap {
-            position: relative;
-            display: inline-flex; align-items: center; justify-content: center;
-            filter: drop-shadow(0 4px 20px rgba(99,102,241,0.42))
-                    drop-shadow(0 0 44px rgba(129,140,248,0.2));
+            position: relative; display: inline-flex; align-items: center; justify-content: center;
+            filter: drop-shadow(0 4px 20px rgba(99,102,241,0.42)) drop-shadow(0 0 44px rgba(129,140,248,0.2));
           }
-          .loading-name {
-            font-size: 1.12rem; font-weight: 600; letter-spacing: -0.02em;
-            color: rgba(228,228,245,0.88);
-            margin-top: 0.2rem;
-          }
-          .loading-sub {
-            font-size: 0.71rem; font-weight: 500; letter-spacing: 0.13em;
-            text-transform: uppercase;
-            color: rgba(129,140,248,0.44);
-            margin-top: -0.4rem;
-          }
+          .loading-name { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.02em; color: rgba(228,228,245,0.88); margin-top: 0.2rem; }
+          .loading-sub { font-size: 0.71rem; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(129,140,248,0.44); margin-top: -0.4rem; }
 
-          /* ── Navbar — desktop pill ──────────────────────────────────── */
+          /* ── Navbar — desktop pill ───────────────────────────────── */
           .site-nav {
-            position: fixed;
-            top: 48px; left: 50%; transform: translateX(-50%);
+            position: fixed; top: 48px; left: 50%; transform: translateX(-50%);
             display: flex; gap: 0.1rem; padding: 0.3rem;
             background: rgba(6,6,18,0.8);
-            backdrop-filter: blur(20px) saturate(160%);
-            -webkit-backdrop-filter: blur(20px) saturate(160%);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            border-radius: 100px; z-index: 150; white-space: nowrap;
+            backdrop-filter: blur(20px) saturate(160%); -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 0.5px solid rgba(255,255,255,0.08); border-radius: 100px;
+            z-index: 150; white-space: nowrap;
             box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 24px rgba(0,0,0,0.3);
           }
-          .nav-link {
-            padding: 0.38rem 0.88rem; border-radius: 100px;
-            font-size: 0.77rem; font-weight: 500;
-            color: rgba(170,174,228,0.5); text-decoration: none;
-            transition: color 0.18s, background 0.18s;
-          }
+          .nav-link { padding: 0.38rem 0.88rem; border-radius: 100px; font-size: 0.77rem; font-weight: 500; color: rgba(170,174,228,0.5); text-decoration: none; transition: color 0.18s, background 0.18s; }
           .nav-link:hover { color: rgba(200,202,255,0.86); background: rgba(255,255,255,0.05); }
-          .nav-link.nav-active {
-            background: rgba(99,102,241,0.15);
-            color: rgba(165,168,255,0.92);
-          }
+          .nav-link.nav-active { background: rgba(99,102,241,0.15); color: rgba(165,168,255,0.92); }
           @media (max-width: 639px) { .site-nav { display: none; } }
 
-          /* ── Navbar — mobile FAB ────────────────────────────────────── */
+          /* ── Navbar — mobile FAB ─────────────────────────────────── */
           .nav-fab {
             position: fixed; bottom: 24px; right: 20px;
             width: 46px; height: 46px; border-radius: 50%;
             background: rgba(10,10,22,0.9);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 0.5px solid rgba(99,102,241,0.26);
-            color: rgba(165,168,255,0.84);
-            display: flex; align-items: center; justify-content: center;
+            color: rgba(165,168,255,0.84); display: flex; align-items: center; justify-content: center;
             cursor: pointer; z-index: 150;
             box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,102,241,0.08);
             transition: background 0.2s, border-color 0.2s;
@@ -865,279 +873,164 @@ function App() {
           .nav-fab:hover { background: rgba(20,18,50,0.95); border-color: rgba(99,102,241,0.4); }
           @media (min-width: 640px) { .nav-fab { display: none; } }
 
-          /* ── Navbar — mobile dropdown ───────────────────────────────── */
+          /* ── Navbar — mobile dropdown ────────────────────────────── */
           .nav-mobile-menu {
             position: fixed; bottom: 80px; right: 16px; width: 192px;
             background: rgba(8,8,20,0.94);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 0.5px solid rgba(255,255,255,0.09);
-            border-radius: 16px; padding: 0.45rem; z-index: 149;
+            border: 0.5px solid rgba(255,255,255,0.09); border-radius: 16px;
+            padding: 0.45rem; z-index: 149;
             box-shadow: 0 1px 0 rgba(255,255,255,0.07) inset, 0 16px 40px rgba(0,0,0,0.46);
           }
-          .nav-mobile-link {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0.68rem 0.85rem; border-radius: 10px;
-            font-size: 0.87rem; font-weight: 500;
-            color: rgba(178,180,228,0.72); text-decoration: none;
-            transition: background 0.15s, color 0.15s;
-          }
-          .nav-mobile-link:hover, .nav-mobile-link.nav-active {
-            background: rgba(99,102,241,0.12);
-            color: rgba(165,168,255,0.96);
-          }
+          .nav-mobile-link { display: flex; align-items: center; justify-content: space-between; padding: 0.68rem 0.85rem; border-radius: 10px; font-size: 0.87rem; font-weight: 500; color: rgba(178,180,228,0.72); text-decoration: none; transition: background 0.15s, color 0.15s; }
+          .nav-mobile-link:hover, .nav-mobile-link.nav-active { background: rgba(99,102,241,0.12); color: rgba(165,168,255,0.96); }
           .nav-arrow { opacity: 0.28; font-size: 0.9rem; }
           @media (min-width: 640px) { .nav-fab, .nav-mobile-menu { display: none !important; } }
 
-          /* ── Scroll progress ────────────────────────────────────────── */
-          .scroll-progress {
-            position: fixed; top: 0; left: 0; right: 0; height: 1.5px;
-            background: linear-gradient(90deg, #6366f1 0%, #a78bfa 50%, #c4b5fd 100%);
-            transform-origin: 0%; z-index: 300;
-          }
+          /* ── Scroll progress ─────────────────────────────────────── */
+          .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 1.5px; background: linear-gradient(90deg, #6366f1 0%, #a78bfa 50%, #c4b5fd 100%); transform-origin: 0%; z-index: 300; }
 
-          /* ── Cursor glow ────────────────────────────────────────────── */
-          .cursor-glow {
-            position: fixed; width: 520px; height: 520px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(99,102,241,0.04) 0%, transparent 65%);
-            pointer-events: none; z-index: 0;
-          }
+          /* ── Cursor glow ─────────────────────────────────────────── */
+          .cursor-glow { position: fixed; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(99,102,241,0.03) 0%, transparent 65%); pointer-events: none; z-index: 0; }
           @media (hover: none) { .cursor-glow { display: none; } }
 
-          /* ── Open-to banner ─────────────────────────────────────────── */
+          /* ── Open-to banner ──────────────────────────────────────── */
           .open-banner {
-            position: fixed; top: 0; left: 0; right: 0;
-            padding: 0.55rem 1.5rem;
+            position: fixed; top: 0; left: 0; right: 0; padding: 0.55rem 1.5rem;
             background: rgba(8,8,20,0.72);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border-bottom: 0.5px solid rgba(255,255,255,0.06);
-            text-align: center; font-size: 0.81rem;
-            color: rgba(165,168,255,0.72); text-decoration: none; z-index: 200;
+            text-align: center; font-size: 0.81rem; color: rgba(165,168,255,0.72);
+            text-decoration: none; z-index: 200;
             display: flex; align-items: center; justify-content: center;
             gap: 0.65rem; letter-spacing: 0.015em;
             transition: background 0.2s, color 0.2s;
           }
           .open-banner:hover { background: rgba(18,12,45,0.82); color: rgba(185,188,255,0.9); }
-          .banner-dot {
-            width: 5px; height: 5px; border-radius: 50%; background: #818cf8;
-            box-shadow: 0 0 7px rgba(129,140,248,0.8), 0 0 16px rgba(129,140,248,0.3);
-            flex-shrink: 0; animation: dot-pulse 2.4s ease-in-out infinite;
-          }
-          @keyframes dot-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-          }
+          .banner-dot { width: 5px; height: 5px; border-radius: 50%; background: #818cf8; box-shadow: 0 0 7px rgba(129,140,248,0.8), 0 0 16px rgba(129,140,248,0.3); flex-shrink: 0; animation: dot-pulse 2.4s ease-in-out infinite; }
+          @keyframes dot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-          /* ── Hero ───────────────────────────────────────────────────── */
+          /* ── Hero ────────────────────────────────────────────────── */
           .hero {
             min-height: 100vh;
-            display: flex; align-items: center; justify-content: flex-start;
-            position: relative;
-            padding: 2rem 2rem 2rem clamp(2rem, 8vw, 8rem);
-            padding-top: 5.5rem; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; padding: 2rem; padding-top: 5.5rem;
+            overflow: hidden; text-align: center;
           }
-          .hero-orb {
-            position: absolute; border-radius: 50%;
-            pointer-events: none; filter: blur(80px); will-change: transform;
-          }
-          .orb-1 {
-            width: 700px; height: 700px;
-            background: radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 65%);
-            top: -260px; right: -160px;
-            animation: orb-drift 14s ease-in-out infinite alternate;
-          }
-          .orb-2 {
-            width: 480px; height: 480px;
-            background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 65%);
-            bottom: -130px; left: -90px;
-            animation: orb-drift 18s ease-in-out infinite alternate-reverse;
-          }
-          .orb-3 {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 65%);
-            top: 38%; right: 22%;
-            animation: orb-drift 11s ease-in-out infinite alternate;
-          }
-          .orb-4 {
-            width: 180px; height: 180px;
-            background: radial-gradient(circle, rgba(196,181,253,0.06) 0%, transparent 65%);
-            top: 15%; left: 30%; filter: blur(60px);
-            animation: orb-drift 16s ease-in-out infinite alternate-reverse;
-          }
-          @keyframes orb-drift {
-            from { transform: translate(0, 0) scale(1); }
-            to   { transform: translate(20px, -16px) scale(1.06); }
-          }
-          .hero-content { position: relative; z-index: 1; max-width: 680px; }
-          .hero-eyebrow {
-            font-size: 0.73rem; font-weight: 600; letter-spacing: 0.16em;
-            text-transform: uppercase; color: rgba(129,140,248,0.48);
-            margin-bottom: 1rem;
-          }
-          .hero-name {
-            font-size: clamp(2.8rem, 7.5vw, 5.2rem); font-weight: 700;
-            letter-spacing: -0.05em; line-height: 1.04;
-            color: #f0f0ff; margin-bottom: 1.2rem;
-          }
+          .hero-orb { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(90px); will-change: transform; }
+          .orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(99,102,241,0.11) 0%, transparent 65%); top: -260px; right: -160px; animation: orb-drift 14s ease-in-out infinite alternate; }
+          .orb-2 { width: 480px; height: 480px; background: radial-gradient(circle, rgba(139,92,246,0.09) 0%, transparent 65%); bottom: -130px; left: -90px; animation: orb-drift 18s ease-in-out infinite alternate-reverse; }
+          .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(167,139,250,0.07) 0%, transparent 65%); top: 38%; right: 22%; animation: orb-drift 11s ease-in-out infinite alternate; }
+          @keyframes orb-drift { from { transform: translate(0,0) scale(1); } to { transform: translate(20px,-16px) scale(1.06); } }
+
+          .hero-content { position: relative; z-index: 1; max-width: 680px; width: 100%; margin: 0 auto; }
+          .hero-eyebrow { font-size: 0.73rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(129,140,248,0.48); margin-bottom: 1rem; }
+          .hero-name { font-size: clamp(2.8rem, 7.5vw, 5.2rem); font-weight: 700; letter-spacing: -0.05em; line-height: 1.04; color: #f0f0ff; margin-bottom: 1.2rem; }
           .cursor-blink { color: #818cf8; margin-left: 3px; font-weight: 300; }
-          .hero-role-pill {
-            display: inline-block;
-            background: rgba(99,102,241,0.08);
-            border: 0.5px solid rgba(99,102,241,0.2);
-            border-radius: 100px; padding: 0.44rem 1rem;
-            font-size: 0.77rem; color: rgba(165,168,255,0.8);
-            margin-bottom: 1.2rem; letter-spacing: 0.01em; line-height: 1.5;
+          .hero-role-pill { display: inline-block; background: rgba(99,102,241,0.08); border: 0.5px solid rgba(99,102,241,0.2); border-radius: 100px; padding: 0.44rem 1rem; font-size: 0.77rem; color: rgba(165,168,255,0.8); margin-bottom: 1.2rem; letter-spacing: 0.01em; line-height: 1.5; }
+          .hero-summary { font-size: 0.98rem; line-height: 1.74; color: rgba(200,200,230,0.54); margin: 0 auto 1.1rem; max-width: 560px; }
+          .hero-industries { display: flex; flex-wrap: wrap; gap: 0.38rem; margin-bottom: 1.8rem; justify-content: center; }
+          .industry-tag { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; color: rgba(165,168,255,0.62); background: rgba(99,102,241,0.08); border: 0.5px solid rgba(99,102,241,0.16); border-radius: 100px; padding: 0.22rem 0.65rem; }
+
+          /* ── Hero CTAs ───────────────────────────────────────────── */
+          .hero-cta-row { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+
+          /* Primary CTA — filled indigo */
+          .cta-primary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.62rem 1.4rem;
+            background: rgba(99,102,241,0.2);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 0.5px solid rgba(99,102,241,0.45);
+            border-radius: 100px; color: rgba(185,188,255,0.95);
+            font-size: 0.88rem; font-weight: 600; text-decoration: none; min-height: 44px;
+            box-shadow: 0 0 0 1px rgba(99,102,241,0.1), 0 4px 20px rgba(99,102,241,0.18);
+            transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.15s;
           }
-          .hero-summary {
-            font-size: 0.98rem; line-height: 1.74;
-            color: rgba(200,200,230,0.54); margin-bottom: 1.1rem; max-width: 580px;
+          .cta-primary:hover { background: rgba(99,102,241,0.3); border-color: rgba(99,102,241,0.6); box-shadow: 0 0 0 1px rgba(99,102,241,0.15), 0 6px 28px rgba(99,102,241,0.28); }
+
+          /* Secondary CTA — outline glass */
+          .cta-secondary {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.62rem 1.4rem;
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 0.5px solid rgba(255,255,255,0.12);
+            border-radius: 100px; color: rgba(200,202,250,0.7);
+            font-size: 0.88rem; font-weight: 500; text-decoration: none; min-height: 44px;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
           }
-          .hero-industries {
-            display: flex; flex-wrap: wrap; gap: 0.38rem; margin-bottom: 1.8rem;
-          }
-          /* Industry tags — indigo palette, no gold */
-          .industry-tag {
-            font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em;
-            color: rgba(165,168,255,0.62);
-            background: rgba(99,102,241,0.08);
-            border: 0.5px solid rgba(99,102,241,0.16);
-            border-radius: 100px; padding: 0.22rem 0.65rem;
-          }
-          .hero-nav { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2.6rem; }
+          .cta-secondary:hover { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.28); color: rgba(185,188,255,0.9); }
+
+          .hero-nav { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 2.6rem; justify-content: center; }
 
           /* macOS-style glass button */
           .glass-btn {
-            display: inline-flex; align-items: center;
-            padding: 0.52rem 1.2rem;
-            background: rgba(255,255,255,0.05);
+            display: inline-flex; align-items: center; padding: 0.52rem 1.2rem;
+            background: rgba(255,255,255,0.04);
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 0.5px solid rgba(255,255,255,0.11); border-radius: 100px;
-            color: rgba(210,210,250,0.76); font-size: 0.86rem; font-weight: 500;
-            text-decoration: none;
-            transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 0 rgba(255,255,255,0.07) inset, 0 4px 12px rgba(0,0,0,0.24);
-            min-height: 44px;
+            border: 0.5px solid rgba(255,255,255,0.1); border-radius: 100px;
+            color: rgba(200,200,245,0.62); font-size: 0.84rem; font-weight: 500;
+            text-decoration: none; min-height: 40px;
+            transition: background 0.2s, border-color 0.2s, color 0.2s;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset;
           }
-          .glass-btn:hover {
-            background: rgba(99,102,241,0.13);
-            border-color: rgba(129,140,248,0.3); color: #b8bbff;
-            box-shadow: 0 1px 0 rgba(255,255,255,0.09) inset, 0 6px 20px rgba(99,102,241,0.16);
-          }
-          .scroll-hint {
-            display: flex; align-items: center; gap: 0.75rem;
-            font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em;
-            text-transform: uppercase; color: rgba(129,140,248,0.26);
-          }
-          .scroll-line {
-            width: 1px; height: 28px;
-            background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.45), transparent);
-            transform-origin: center;
-          }
+          .glass-btn:hover { background: rgba(99,102,241,0.1); border-color: rgba(129,140,248,0.25); color: #b8bbff; }
 
-          /* ── Glass card ─────────────────────────────────────────────── */
+          .scroll-hint { display: flex; align-items: center; gap: 0.75rem; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(129,140,248,0.26); justify-content: center; }
+          .scroll-line { width: 1px; height: 28px; background: linear-gradient(to bottom, transparent, rgba(129,140,248,0.45), transparent); transform-origin: center; }
+
+          /* ── Glass card ──────────────────────────────────────────── */
           .glass-card {
-            background: rgba(255,255,255,0.048);
-            backdrop-filter: blur(24px) saturate(150%);
-            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            background: rgba(255,255,255,0.045);
+            backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%);
             border: 0.5px solid rgba(255,255,255,0.1); border-radius: 20px;
-            box-shadow:
-              0 1px 0 rgba(255,255,255,0.08) inset,
-              0 8px 24px rgba(0,0,0,0.18),
-              0 28px 56px rgba(0,0,0,0.28);
+            box-shadow: 0 1px 0 rgba(255,255,255,0.07) inset, 0 8px 24px rgba(0,0,0,0.18), 0 28px 56px rgba(0,0,0,0.26);
             transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
           }
-          .glass-card:hover {
-            border-color: rgba(129,140,248,0.17);
-            box-shadow:
-              0 1px 0 rgba(255,255,255,0.09) inset,
-              0 10px 28px rgba(0,0,0,0.2),
-              0 36px 64px rgba(0,0,0,0.32),
-              0 0 36px rgba(99,102,241,0.05);
-          }
+          .glass-card:hover { border-color: rgba(129,140,248,0.17); box-shadow: 0 1px 0 rgba(255,255,255,0.08) inset, 0 10px 28px rgba(0,0,0,0.2), 0 36px 64px rgba(0,0,0,0.3), 0 0 36px rgba(99,102,241,0.05); }
 
-          /* ── Sections ───────────────────────────────────────────────── */
+          /* ── Sections ────────────────────────────────────────────── */
           .section { max-width: 960px; margin: 0 auto; padding: 6rem 2rem; scroll-margin-top: 56px; }
           .pillars-section { padding: 5rem 2rem; }
           .section-label-wrap { display: flex; justify-content: center; margin-bottom: 1rem; }
-          .section-label {
-            display: inline-block; font-size: 0.67rem; font-weight: 700;
-            letter-spacing: 0.18em; text-transform: uppercase;
-            color: rgba(129,140,248,0.72);
-            background: rgba(99,102,241,0.08);
-            border: 0.5px solid rgba(99,102,241,0.18);
-            border-radius: 100px; padding: 0.26rem 0.82rem;
-          }
-          .section-title {
-            font-size: clamp(1.6rem, 3.2vw, 2.2rem); font-weight: 700;
-            letter-spacing: -0.035em; line-height: 1.18; color: #f0f0ff;
-            text-align: center; margin-bottom: 0.5rem;
-          }
-          .section-sub {
-            font-size: 0.91rem; color: rgba(175,175,210,0.44);
-            text-align: center; max-width: 480px;
-            margin: 0 auto 2.6rem; line-height: 1.65;
-          }
+          .section-label { display: inline-block; font-size: 0.67rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(129,140,248,0.72); background: rgba(99,102,241,0.08); border: 0.5px solid rgba(99,102,241,0.18); border-radius: 100px; padding: 0.26rem 0.82rem; }
+          .section-title { font-size: clamp(1.6rem, 3.2vw, 2.2rem); font-weight: 700; letter-spacing: -0.035em; line-height: 1.18; color: #f0f0ff; text-align: center; margin-bottom: 0.5rem; }
+          .section-sub { font-size: 0.91rem; color: rgba(175,175,210,0.44); text-align: center; max-width: 480px; margin: 0 auto 2.6rem; line-height: 1.65; }
 
-          /* ── Timeline ───────────────────────────────────────────────── */
+          /* ── Timeline ────────────────────────────────────────────── */
           .timeline { position: relative; padding-left: 2rem; }
-          .timeline::before {
-            content: ''; position: absolute;
-            left: 0; top: 12px; bottom: 12px; width: 0.5px;
-            background: linear-gradient(to bottom, rgba(99,102,241,0.5) 0%, rgba(99,102,241,0.22) 40%, rgba(99,102,241,0.04) 100%);
-          }
+          .timeline::before { content: ''; position: absolute; left: 0; top: 12px; bottom: 12px; width: 0.5px; background: linear-gradient(to bottom, rgba(99,102,241,0.5) 0%, rgba(99,102,241,0.22) 40%, rgba(99,102,241,0.04) 100%); }
           .timeline-item { position: relative; margin-bottom: 1.2rem; }
-          .timeline-dot {
-            position: absolute; left: -2rem; top: 1.65rem;
-            width: 7px; height: 7px; border-radius: 50%; background: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99,102,241,0.13), 0 0 10px rgba(99,102,241,0.5);
-            transform: translateX(-3px);
-          }
+          .timeline-dot { position: absolute; left: -2rem; top: 1.65rem; width: 7px; height: 7px; border-radius: 50%; background: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.13), 0 0 10px rgba(99,102,241,0.5); transform: translateX(-3px); }
           .exp-card { padding: 1.7rem 2rem; }
-          .exp-top {
-            display: flex; justify-content: space-between;
-            align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem;
-          }
+          .exp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
           .exp-role { font-size: 1.01rem; font-weight: 600; color: #e8e8f8; margin-bottom: 0.2rem; }
           .exp-company { font-size: 0.86rem; color: #818cf8; font-weight: 500; }
           .exp-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 0.2rem; flex-shrink: 0; }
           .exp-period { font-size: 0.76rem; color: rgba(175,175,215,0.4); }
           .exp-location { font-size: 0.73rem; color: rgba(175,175,215,0.28); }
 
-          /* ── Bullet list ────────────────────────────────────────────── */
-          .bullet-list {
-            list-style: none; padding: 0; margin: 0;
-            color: rgba(195,195,228,0.6); font-size: 0.87rem; line-height: 1.82;
-          }
+          /* ── Bullet list ─────────────────────────────────────────── */
+          .bullet-list { list-style: none; padding: 0; margin: 0; color: rgba(195,195,228,0.6); font-size: 0.87rem; line-height: 1.82; }
           .bullet-list li { position: relative; padding-left: 1.1rem; margin-bottom: 0.28rem; }
-          .bullet-list li::before {
-            content: ''; position: absolute; left: 0; top: 0.7em;
-            width: 3px; height: 3px; border-radius: 50%; background: rgba(99,102,241,0.55);
-          }
+          .bullet-list li::before { content: ''; position: absolute; left: 0; top: 0.7em; width: 3px; height: 3px; border-radius: 50%; background: rgba(99,102,241,0.55); }
 
-          /* ── Pillars ────────────────────────────────────────────────── */
+          /* ── Pillars ─────────────────────────────────────────────── */
           .pillars-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(265px, 1fr)); gap: 1.1rem; }
           .pillar-card { padding: 2rem 1.8rem; position: relative; overflow: hidden; }
-          .pillar-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09), transparent);
-          }
+          .pillar-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.09), transparent); }
           .pillar-num { font-size: 0.66rem; font-weight: 700; letter-spacing: 0.13em; color: rgba(99,102,241,0.38); margin-bottom: 0.9rem; }
           .pillar-title { font-size: 1.2rem; font-weight: 700; color: #eeeeff; margin-bottom: 0.26rem; letter-spacing: -0.025em; }
           .pillar-sub { font-size: 0.81rem; color: rgba(175,175,215,0.4); margin-bottom: 1.25rem; }
           .tag-row { display: flex; flex-wrap: wrap; gap: 0.36rem; }
-          .tag {
-            background: rgba(99,102,241,0.09); border: 0.5px solid rgba(99,102,241,0.15);
-            color: rgba(165,168,255,0.76); padding: 0.24rem 0.68rem; border-radius: 100px;
-            font-size: 0.72rem; font-weight: 500; transition: background 0.18s, border-color 0.18s;
-          }
+          .tag { background: rgba(99,102,241,0.09); border: 0.5px solid rgba(99,102,241,0.15); color: rgba(165,168,255,0.76); padding: 0.24rem 0.68rem; border-radius: 100px; font-size: 0.72rem; font-weight: 500; transition: background 0.18s, border-color 0.18s; }
           .tag:hover { background: rgba(99,102,241,0.16); border-color: rgba(99,102,241,0.26); }
 
-          /* ── Projects ───────────────────────────────────────────────── */
+          /* ── Projects ────────────────────────────────────────────── */
           .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.1rem; }
           .project-card { padding: 1.9rem; position: relative; overflow: hidden; }
-          .project-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-          }
+          .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
           .project-period { font-size: 0.7rem; color: rgba(129,140,248,0.4); letter-spacing: 0.06em; margin-bottom: 0.5rem; }
           .project-name { font-size: 1.26rem; font-weight: 700; color: #eeeeff; letter-spacing: -0.025em; margin-bottom: 0.24rem; }
           .project-subtitle { font-size: 0.86rem; color: #818cf8; margin-bottom: 0.82rem; }
@@ -1146,65 +1039,44 @@ function App() {
           .project-link { font-size: 0.83rem; font-weight: 600; color: rgba(129,140,248,0.72); text-decoration: none; display: inline-block; transition: color 0.18s; }
           .project-link:hover { color: #b8bbff; }
 
-          /* ── Education ──────────────────────────────────────────────── */
+          /* ── Education ───────────────────────────────────────────── */
           .edu-card { padding: 2rem; }
           .edu-degree { font-size: 1.08rem; font-weight: 700; color: #eeeeff; letter-spacing: -0.02em; margin-bottom: 0.32rem; }
           .edu-institution { font-size: 0.9rem; font-weight: 500; color: #818cf8; margin-bottom: 0.24rem; }
           .edu-majors { font-size: 0.84rem; color: rgba(175,175,215,0.44); margin-bottom: 0.2rem; }
           .edu-period { font-size: 0.78rem; color: rgba(175,175,215,0.3); margin-bottom: 1.1rem; }
 
-          /* ── Certifications ─────────────────────────────────────────── */
+          /* ── Certifications ──────────────────────────────────────── */
           .certs-row { display: flex; flex-wrap: wrap; gap: 0.72rem; justify-content: center; }
-          .cert-pill {
-            background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.09);
-            color: rgba(195,195,235,0.66); padding: 0.56rem 1.25rem; border-radius: 100px;
-            font-size: 0.85rem; font-weight: 500;
-            transition: border-color 0.2s, background 0.2s, color 0.2s;
-          }
+          .cert-pill { background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.09); color: rgba(195,195,235,0.66); padding: 0.56rem 1.25rem; border-radius: 100px; font-size: 0.85rem; font-weight: 500; transition: border-color 0.2s, background 0.2s, color 0.2s; }
           .cert-pill:hover { background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.24); color: rgba(185,188,255,0.86); }
 
-          /* ── Footer ─────────────────────────────────────────────────── */
+          /* ── Footer ──────────────────────────────────────────────── */
           .footer { padding: 2rem 2rem 5rem; margin-top: 1rem; }
-          .footer-glass {
-            max-width: 500px; margin: 0 auto;
-            background: rgba(255,255,255,0.032);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border: 0.5px solid rgba(255,255,255,0.08);
-            border-radius: 22px; padding: 2.4rem 2rem; text-align: center;
-            box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 24px 52px rgba(0,0,0,0.32);
-          }
+          .footer-glass { max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.03); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 0.5px solid rgba(255,255,255,0.08); border-radius: 22px; padding: 2.4rem 2rem; text-align: center; box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 24px 52px rgba(0,0,0,0.32); }
           .footer-logo { display: flex; align-items: center; justify-content: center; gap: 0.55rem; margin-bottom: 1rem; }
-          .footer-logo-name {
-            font-size: 0.94rem; font-weight: 600; letter-spacing: -0.02em;
-            color: rgba(185,188,255,0.72);
-          }
+          .footer-logo-name { font-size: 0.94rem; font-weight: 600; letter-spacing: -0.02em; color: rgba(185,188,255,0.72); }
           .footer-quote { font-size: 1.04rem; font-weight: 600; color: rgba(165,168,255,0.68); margin-bottom: 1.25rem; letter-spacing: -0.01em; }
+          .footer-cta-row { margin-bottom: 1.4rem; }
+          .footer-download { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.52rem 1.2rem; background: rgba(99,102,241,0.14); border: 0.5px solid rgba(99,102,241,0.32); border-radius: 100px; color: rgba(175,178,255,0.86); font-size: 0.82rem; font-weight: 600; text-decoration: none; transition: background 0.2s, border-color 0.2s; }
+          .footer-download:hover { background: rgba(99,102,241,0.24); border-color: rgba(99,102,241,0.5); }
           .footer-nav { display: flex; gap: 2rem; justify-content: center; margin-bottom: 0.65rem; flex-wrap: wrap; }
           .footer-nav a { color: rgba(155,158,255,0.48); text-decoration: none; font-size: 0.86rem; transition: color 0.2s; }
           .footer-nav a:hover { color: rgba(185,188,255,0.86); }
           .footer-contact { font-size: 0.76rem; color: rgba(155,158,255,0.26); }
 
-          /* ── Reduced motion ─────────────────────────────────────────── */
+          /* ── Reduced motion ──────────────────────────────────────── */
           @media (prefers-reduced-motion: reduce) {
             .hero-orb, .banner-dot { animation: none !important; }
             .scroll-line { animation: none !important; }
           }
 
-          /* ── Responsive 768px ───────────────────────────────────────── */
+          /* ── Responsive 768px ────────────────────────────────────── */
           @media (max-width: 768px) {
-            .hero {
-              min-height: 100svh;
-              padding: 1.5rem 1.25rem;
-              padding-top: 5rem;
-              justify-content: center;
-            }
-            .hero-content { text-align: center; }
+            .hero { min-height: 100svh; padding: 1.5rem 1.25rem; padding-top: 5rem; }
             .hero-name { font-size: clamp(2.2rem, 9vw, 3.2rem); }
             .hero-role-pill { font-size: 0.72rem; }
-            .hero-summary { font-size: 0.91rem; text-align: center; }
-            .hero-industries { justify-content: center; }
-            .hero-nav { justify-content: center; }
-            .scroll-hint { justify-content: center; }
+            .hero-summary { font-size: 0.91rem; }
             .section { padding: 4rem 1.25rem; }
             .pillars-section { padding: 4rem 1.25rem; }
             .pillars-grid { grid-template-columns: 1fr; }
@@ -1219,27 +1091,26 @@ function App() {
             .footer-nav { gap: 1.25rem; }
           }
 
-          /* ── Responsive 480px ───────────────────────────────────────── */
+          /* ── Responsive 480px ────────────────────────────────────── */
           @media (max-width: 480px) {
             .hero { padding: 1rem 1rem; padding-top: 4.5rem; }
-            .hero-nav { gap: 0.4rem; }
-            .glass-btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
+            .hero-cta-row { gap: 0.5rem; }
+            .cta-primary, .cta-secondary { font-size: 0.82rem; padding: 0.56rem 1.1rem; }
+            .glass-btn { padding: 0.46rem 0.9rem; font-size: 0.79rem; }
             .section { padding: 3rem 1rem; }
             .pillars-section { padding: 3rem 1rem; }
             .open-banner { font-size: 0.74rem; padding: 0.48rem 1rem; }
             .certs-row { gap: 0.5rem; }
             .cert-pill { font-size: 0.78rem; padding: 0.48rem 0.9rem; }
-            /* Disable backdrop-filter on low-end mobile for performance */
             .glass-card { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(16,16,32,0.88); }
             .glass-btn { backdrop-filter: none; -webkit-backdrop-filter: none; }
             .footer-glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: rgba(16,16,32,0.88); }
-            .footer { padding-bottom: 80px; } /* clear mobile FAB */
+            .footer { padding-bottom: 80px; }
           }
 
-          /* ── Responsive 360px ───────────────────────────────────────── */
+          /* ── Responsive 360px ────────────────────────────────────── */
           @media (max-width: 360px) {
             .hero-name { font-size: 2rem; }
-            .glass-btn { padding: 0.46rem 0.8rem; font-size: 0.76rem; }
             .section { padding: 2.5rem 0.75rem; }
             .hero-role-pill { font-size: 0.68rem; }
           }
