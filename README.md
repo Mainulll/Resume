@@ -2,7 +2,7 @@
 
 A single-page interactive portfolio built for recruiting at tier-1 consulting, strategy, and analytics firms. Designed from the ground up with a focus on motion design, performance, and professional presentation.
 
-**Live:** [minullokuliyana.vercel.app](https://minullokuliyana.vercel.app) 
+**Live:** [minul.vercel.app](https://minul.vercel.app) 
 
 ---
 
