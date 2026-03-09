@@ -15,13 +15,13 @@ const data = {
     github: 'https://github.com/Mainulll',
   },
   summary: `Analytically driven early-career professional with cross-industry experience spanning consumer technology, manufacturing, SaaS, and academic research. Adept at synthesising complex data into structured recommendations, engaging stakeholders at all seniority levels, and delivering measurable impact through a combination of technical rigour and strong interpersonal skills. Targeting graduate roles in consulting, strategy, and analytics.`,
-  message: `Across five industries, I've transformed complex operational challenges into structured insights, automation solutions, and stakeholder-aligned recommendations that deliver measurable commercial impact.`,
+  message: `Across six industries, I've transformed complex operational challenges into structured insights, automation solutions, and stakeholder-aligned recommendations that deliver measurable commercial impact.`,
   industries: [
-    'Consumer Technology',
+    'Home Appliances & Supply Chain',
     'Power & Manufacturing',
+    'Consumer Technology',
     'Academic Research',
     'SaaS & Software',
-    'Digital Strategy',
   ],
   experience: [
     {
@@ -30,11 +30,9 @@ const data = {
       period: 'Jan 2026 – Present',
       location: 'Clayton, VIC (Hybrid)',
       highlights: [
-        'Developed Power BI reporting frameworks surfacing supply chain KPIs across procurement and sales, enabling faster, data-driven decision-making',
-        'Engineered Excel/VBA automation tools to eliminate manual reporting workflows, improving data accuracy and reducing operational cycle time',
-        'Manage national inventory allocation across key accounts in SAP, proactively identifying and escalating supply risks to minimise commercial disruption',
-        'Collaborate daily with Sales, Customer Service, and Operations stakeholders to align inventory strategy with commercial priorities — recognised for clear, persuasive communication across functions',
-        'Structure cost-benefit analyses and business cases to support procurement decisions and resource allocation recommendations',
+        'Developed Power BI frameworks and Excel/VBA automation with procurement and sales teams, surfacing KPIs across 500+ SKUs to enable data-driven decision making — reducing manual reporting by ~25%',
+        'Managed $50M+ in national inventory across Australia and New Zealand for Bosch, Siemens, Neff, and Gaggenau in SAP, owning stock transfers, allocations, and project reservations while collaborating with 3PL providers and customer service to reduce backorder rates',
+        'Structured cost-benefit analyses and scenario planning in Excel to deliver actionable procurement recommendations; led inventory audits and master-data validation across 3 distribution centres for senior stakeholders',
       ],
     },
     {
@@ -43,10 +41,9 @@ const data = {
       period: 'Jan 2025 – Jan 2026',
       location: 'Melbourne, VIC (Hybrid)',
       highlights: [
-        'Developed Python automation tools to eliminate manual workflow inefficiencies across engineering, supply chain, and commercial functions in a complex metal fabrication and electrical sub-assembly manufacturing environment',
-        'Designed Power BI dashboards and Excel/VBA reporting infrastructure to improve data quality and operational visibility for APAC procurement operations',
-        'Led end-to-end RFQ processes across APAC, managing supplier engagement, capability evaluation, and commercial negotiation — praised by senior leadership for professionalism and stakeholder management',
-        'Identified and delivered cost-reduction and supply-continuity initiatives through structured data analysis and supplier performance benchmarking',
+        'Managed two concurrent diesel genset development programs for distinct regional markets, coordinating cross-functional teams and owning on-time delivery of all OTS and in-development parts across engineering functions',
+        'Developed Python automation and agentic AI workflows across 3 functions; designed Power BI dashboards improving data quality for APAC procurement across 10+ markets and 50+ categories',
+        'Led end-to-end RFQ processes managing supplier engagement, capability benchmarking, and commercial negotiation with 30+ suppliers — delivering cost-reduction initiatives contributing to six-figure annual savings',
       ],
     },
     {
@@ -55,9 +52,17 @@ const data = {
       period: 'Jun 2024 – Dec 2024',
       location: 'Melbourne, VIC (Hybrid)',
       highlights: [
-        'Designed Python data pipelines to process and segment large-scale behavioural datasets, enabling rigorous quantitative analysis for academic research',
-        'Synthesised findings into structured analytical reports and visualisations to support evidence-based research outcomes',
-        'Developed reusable analytical frameworks and process documentation to improve team efficiency and knowledge transfer',
+        'Designed Python and R data pipelines to process 100K+ behavioural records using hypothesis-driven analysis with a PhD candidate, improving throughput by 3× and contributing to one peer-reviewed publication',
+      ],
+    },
+    {
+      role: 'Product Demonstrator & Content Creator',
+      company: 'Dyson',
+      period: 'Aug 2022 – Sep 2024',
+      location: 'Melbourne, VIC',
+      highlights: [
+        'Ranked #1 nationally in sales across all Dyson retail staff for two consecutive years, breaking the single-day floorcare sales record at Good Guys Nunawading',
+        'Selected by marketing leadership as exclusive content creator for branded video and social content across multiple product launches',
       ],
     },
     {
@@ -66,20 +71,7 @@ const data = {
       period: 'Feb 2023 – May 2024',
       location: 'Remote',
       highlights: [
-        'Managed client onboarding and digital campaign coordination for a cloud-based SaaS platform, consistently receiving commendations for responsiveness and client empathy',
-        'Analysed customer usage patterns and campaign performance data to identify trends and surface actionable insights for product and marketing strategy',
-        'Delivered data migration, QA testing, and SEO optimisation to improve platform stability, data integrity, and organic search performance',
-      ],
-    },
-    {
-      role: 'Project Manager',
-      company: 'Borealis Creative Group',
-      period: 'Dec 2021 – Dec 2022',
-      location: 'Freelance',
-      highlights: [
-        'Led end-to-end design and deployment of custom websites for franchise clients across diverse industries, managing competing stakeholder requirements and delivering to scope and timeline',
-        'Managed digital software ecosystems for concurrent client engagements, demonstrating strong organisation and attention to detail under pressure',
-        'Initiated and cultivated B2B client relationships through strong interpersonal and commercial communication, securing new engagements and driving client revenue growth',
+        'Managed client onboarding and campaign coordination for a cloud SaaS platform (200+ SME clients), collaborating with sales and product teams to execute 50+ data migrations and deliver actionable insights that drove a 15%+ uplift in engagement',
       ],
     },
   ],
@@ -91,6 +83,15 @@ const data = {
       description: 'Co-founded and built Previa, a full-stack AI-driven financial intelligence platform automating receipt reconciliation, bank statement processing, and transaction matching — reducing manual accounting overhead and unlocking real-time cash flow visibility for SME finance teams.',
       tech: 'React 18, TypeScript, Vite, Chakra UI, Supabase, Python, LLMs (Mistral, Gemini, GPT-4o), n8n, AG-Grid',
       link: 'https://github.com/demigod97/Previa-2.0',
+      linkLabel: 'View on GitHub',
+    },
+    {
+      name: 'GymBro',
+      subtitle: 'AI-Powered Fitness Application',
+      period: '2025 – Present',
+      description: 'Solely designed and built a production-grade mobile app (React Native, Expo, TypeScript) with offline-first SQLite, Zustand state management, and API integrations (Firebase, OpenStreetMap, Open Food Facts) — leveraging agentic AI for development and architecture.',
+      tech: 'React Native, Expo, TypeScript, SQLite, Zustand, Firebase, OpenStreetMap, Open Food Facts API',
+      link: 'https://github.com/Mainulll/Gymbro-App',
       linkLabel: 'View on GitHub',
     },
     {
@@ -115,13 +116,13 @@ const data = {
     ],
   },
   certifications: [
-    'Certified Procurement Professional (CPP) — Cummins',
-    'IQTM Yellow Belt (Lean Six Sigma) — Cummins',
+    'Certified Procurement Professional (CPP)',
+    'Lean Six Sigma Yellow Belt',
     'Six Sigma Foundations — Skillsoft',
   ],
   openTo: 'Open to Graduate Consulting, Strategy and Analyst Roles',
   sectionSubtext: {
-    experience: 'Five industries. One consistent thread: turning complexity into clarity.',
+    experience: 'Six industries. One consistent thread: turning complexity into clarity.',
     projects: 'Building solutions that bridge technical depth with business outcomes.',
     skills: 'The capabilities that underpin structured problem-solving and delivery.',
   },
@@ -129,7 +130,7 @@ const data = {
     {
       title: 'Automation',
       subtitle: 'Data-driven efficiency',
-      items: ['Python', 'Power BI', 'Excel / VBA', 'SQL', 'Data Pipelines', 'SAP'],
+      items: ['Python', 'R', 'Power BI', 'Excel / VBA', 'SQL', 'Data Pipelines', 'SAP', 'n8n'],
     },
     {
       title: 'Perspective',
@@ -139,7 +140,7 @@ const data = {
     {
       title: 'Transformation',
       subtitle: 'Impact at scale',
-      items: ['Process Optimisation', 'Business Case Development', 'Strategic Analysis', 'Responsible AI'],
+      items: ['Agentic AI Workflows', 'LLM Integration', 'Process Optimisation', 'Business Case Development', 'Strategic Analysis', 'Responsible AI'],
     },
   ],
 }
