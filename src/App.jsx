@@ -545,6 +545,90 @@ function IconMail() {
   )
 }
 
+/* ── Projects Carousel ───────────────────────────────────────────────── */
+function ProjectsCarousel() {
+  const trackRef = useRef(null)
+  const [active, setActive] = useState(0)
+  const count = data.projects.length
+
+  const scrollToIndex = (i) => {
+    const track = trackRef.current
+    if (!track) return
+    const card = track.children[i]
+    if (!card) return
+    card.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+    setActive(i)
+  }
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    const onScroll = () => {
+      const cards = Array.from(track.children)
+      const scrollLeft = track.scrollLeft
+      let closest = 0, minDist = Infinity
+      cards.forEach((card, i) => {
+        const dist = Math.abs(card.offsetLeft - scrollLeft)
+        if (dist < minDist) { minDist = dist; closest = i }
+      })
+      setActive(closest)
+    }
+    track.addEventListener('scroll', onScroll, { passive: true })
+    return () => track.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div ref={trackRef} className="carousel-track">
+        {data.projects.map((proj) => (
+          <motion.div key={proj.name}
+            className="glass-card project-card carousel-card"
+            whileHover={{ y: -4 }} transition={{ duration: 0.22 }}>
+            <div className="project-period">{proj.period}</div>
+            <h4 className="project-name">{proj.name}</h4>
+            <p className="project-subtitle">{proj.subtitle}</p>
+            <p className="project-desc">{proj.description}</p>
+            <p className="project-tech">{proj.tech}</p>
+            {proj.link && (
+              <motion.a href={proj.link} className="project-link"
+                target="_blank" rel="noopener noreferrer" whileHover={{ x: 4 }}>
+                {proj.linkLabel || 'View project'} →
+              </motion.a>
+            )}
+          </motion.div>
+        ))}
+      </div>
+
+      <motion.button className="carousel-arrow carousel-prev"
+        onClick={() => scrollToIndex(Math.max(0, active - 1))}
+        style={{ opacity: active === 0 ? 0.3 : 1 }}
+        whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        aria-label="Previous project"
+      >‹</motion.button>
+
+      <motion.button className="carousel-arrow carousel-next"
+        onClick={() => scrollToIndex(Math.min(count - 1, active + 1))}
+        style={{ opacity: active === count - 1 ? 0.3 : 1 }}
+        whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+        aria-label="Next project"
+      >›</motion.button>
+
+      <div className="carousel-dots">
+        {data.projects.map((_, i) => (
+          <motion.button key={i}
+            className={`carousel-dot${i === active ? ' carousel-dot-active' : ''}`}
+            onClick={() => scrollToIndex(i)}
+            whileHover={{ scale: 1.4 }} whileTap={{ scale: 0.9 }}
+            aria-label={`Go to project ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 /* ── App ─────────────────────────────────────────────────────────────── */
 function App() {
   const [loaded, setLoaded] = useState(false)
@@ -803,25 +887,7 @@ function App() {
           <motion.p variants={fadeUp} initial="initial" whileInView="animate" viewport={{ once: true }} className="section-sub">
             {data.sectionSubtext.projects}
           </motion.p>
-          <motion.div variants={stagger} initial="initial" whileInView="animate" viewport={{ once: true }} className="projects-grid">
-            {data.projects.map(proj => (
-              <motion.div key={proj.name} variants={fadeUp}
-                className="glass-card project-card"
-                whileHover={{ y: -6 }} transition={{ duration: 0.25 }}>
-                <div className="project-period">{proj.period}</div>
-                <h4 className="project-name">{proj.name}</h4>
-                <p className="project-subtitle">{proj.subtitle}</p>
-                <p className="project-desc">{proj.description}</p>
-                <p className="project-tech">{proj.tech}</p>
-                {proj.link && (
-                  <motion.a href={proj.link} className="project-link"
-                    target="_blank" rel="noopener noreferrer" whileHover={{ x: 4 }}>
-                    {proj.linkLabel || 'View project'} →
-                  </motion.a>
-                )}
-              </motion.div>
-            ))}
-          </motion.div>
+          <ProjectsCarousel />
         </Section>
 
         {/* ── Education ─────────────────────────────────────────────────── */}
@@ -1124,10 +1190,19 @@ function App() {
           .tag { background: rgba(99,102,241,0.09); border: 0.5px solid rgba(99,102,241,0.15); color: rgba(165,168,255,0.76); padding: 0.24rem 0.68rem; border-radius: 100px; font-size: 0.72rem; font-weight: 500; transition: background 0.18s, border-color 0.18s; }
           .tag:hover { background: rgba(99,102,241,0.16); border-color: rgba(99,102,241,0.26); }
 
-          /* ── Projects ────────────────────────────────────────────── */
-          .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.1rem; }
+          /* ── Projects carousel ───────────────────────────────────── */
+          .carousel-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; gap: 1.1rem; padding: 0.75rem 0.5rem 1.5rem; }
+          .carousel-track::-webkit-scrollbar { display: none; }
+          .carousel-card { flex: 0 0 min(420px, calc(100% - 2rem)); scroll-snap-align: start; }
           .project-card { padding: 1.9rem; position: relative; overflow: hidden; }
           .project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
+          .carousel-arrow { position: absolute; top: calc(50% - 2rem); background: rgba(10,10,22,0.84); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 0.5px solid rgba(99,102,241,0.3); color: rgba(165,168,255,0.86); width: 38px; height: 38px; border-radius: 50%; font-size: 1.4rem; cursor: pointer; z-index: 2; display: flex; align-items: center; justify-content: center; transition: background 0.2s, border-color 0.2s; }
+          .carousel-arrow:hover { background: rgba(28,18,58,0.94); border-color: rgba(99,102,241,0.55); }
+          .carousel-prev { left: -14px; }
+          .carousel-next { right: -14px; }
+          .carousel-dots { display: flex; justify-content: center; gap: 0.48rem; margin-top: 0.9rem; }
+          .carousel-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(99,102,241,0.25); border: none; padding: 0; cursor: pointer; transition: background 0.22s, transform 0.22s; }
+          .carousel-dot-active { background: rgba(129,140,248,0.9); transform: scale(1.5); }
           .project-period { font-size: 0.7rem; color: rgba(129,140,248,0.4); letter-spacing: 0.06em; margin-bottom: 0.5rem; }
           .project-name { font-size: 1.26rem; font-weight: 700; color: #eeeeff; letter-spacing: -0.025em; margin-bottom: 0.24rem; }
           .project-subtitle { font-size: 0.86rem; color: #818cf8; margin-bottom: 0.82rem; }
@@ -1177,7 +1252,8 @@ function App() {
             .section { padding: 4rem 1.25rem; }
             .pillars-section { padding: 4rem 1.25rem; }
             .pillars-grid { grid-template-columns: 1fr; }
-            .projects-grid { grid-template-columns: 1fr; }
+            .carousel-prev { left: 4px; }
+            .carousel-next { right: 4px; }
             .timeline { padding-left: 1.5rem; }
             .timeline-dot { left: -1.5rem; }
             .exp-card { padding: 1.25rem; }
