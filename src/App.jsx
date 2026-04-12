@@ -166,8 +166,8 @@ const data = {
 const ease = [0.22, 1, 0.36, 1]
 
 const blurUp = {
-  initial: { opacity: 0, y: 24, filter: 'blur(6px)' },
-  animate: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
 }
 
 const fadeUp = {
@@ -650,8 +650,8 @@ function App() {
         <motion.header style={{ scale: heroScale, opacity: heroOpacity }} className="hero">
           <motion.div style={{ y: parallaxY }} className="hero-content">
             <motion.p
-              initial={{ opacity: 0, y: 12, filter: 'blur(8px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6, ease }}
               className="hero-eyebrow"
             >
@@ -672,8 +672,8 @@ function App() {
             )}
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.5, type: 'spring', stiffness: 300, damping: 25 }}
               className="hero-role-pill"
             >
@@ -681,8 +681,8 @@ function App() {
             </motion.div>
 
             <motion.p
-              initial={{ opacity: 0, y: 16, filter: 'blur(4px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6, ease }}
               className="hero-summary"
             >
@@ -1032,11 +1032,12 @@ function App() {
             position: relative; min-height: 100vh;
             background: #020617;
             color: #e2e8f0;
+            contain: style;
           }
 
           /* ── Gradient Mesh Orbs ──────────────────────────────────── */
-          .mesh-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-          .mesh-orb { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; }
+          .mesh-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; contain: strict; }
+          .mesh-orb { position: absolute; border-radius: 50%; filter: blur(100px); will-change: transform; transform: translateZ(0); }
           .orb-cyan { width: 700px; height: 700px; background: radial-gradient(circle, rgba(56,189,248,0.09) 0%, transparent 65%); top: -200px; right: -100px; animation: orb-drift-1 22s ease-in-out infinite alternate; }
           .orb-violet { width: 550px; height: 550px; background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 65%); bottom: -150px; left: -80px; animation: orb-drift-2 26s ease-in-out infinite alternate-reverse; }
           .orb-emerald { width: 400px; height: 400px; background: radial-gradient(circle, rgba(52,211,153,0.05) 0%, transparent 65%); top: 45%; left: 15%; animation: orb-drift-3 18s ease-in-out infinite alternate; }
@@ -1045,13 +1046,14 @@ function App() {
           @keyframes orb-drift-3 { from { transform: translate(0,0) scale(1); } to { transform: translate(20px,-15px) scale(1.05); } }
 
           /* ── Dot Grid ────────────────────────────────────────────── */
-          .dot-grid { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+          .dot-grid { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; contain: strict; }
 
           /* ── Loading Screen ──────────────────────────────────────── */
           .loading-screen {
             position: fixed; inset: 0; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 0.6rem; background: #020617;
+            contain: layout style;
           }
           .loading-inner { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.2rem; }
           .loading-gem-canvas { display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 20px rgba(56,189,248,0.35)) drop-shadow(0 0 44px rgba(139,92,246,0.2)); }
@@ -1108,10 +1110,10 @@ function App() {
           @media (min-width: 640px) { .nav-fab, .nav-mobile-menu { display: none !important; } }
 
           /* ── Scroll progress ─────────────────────────────────────── */
-          .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #38bdf8 0%, #a78bfa 50%, #34d399 100%); transform-origin: 0%; z-index: 300; box-shadow: 0 0 8px rgba(56,189,248,0.4); }
+          .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #38bdf8 0%, #a78bfa 50%, #34d399 100%); transform-origin: 0%; z-index: 300; box-shadow: 0 0 8px rgba(56,189,248,0.4); will-change: transform; contain: layout style; }
 
           /* ── Cursor glow ─────────────────────────────────────────── */
-          .cursor-glow { position: fixed; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,0.025) 0%, transparent 65%); pointer-events: none; z-index: 0; }
+          .cursor-glow { position: fixed; width: 520px; height: 520px; border-radius: 50%; background: radial-gradient(circle, rgba(56,189,248,0.025) 0%, transparent 65%); pointer-events: none; z-index: 0; will-change: transform; contain: layout style; }
           @media (hover: none) { .cursor-glow { display: none; } }
 
           /* ── Open-to banner ──────────────────────────────────────── */
@@ -1125,6 +1127,7 @@ function App() {
             display: flex; align-items: center; justify-content: center;
             gap: 0.65rem; letter-spacing: 0.015em;
             transition: background 0.2s, color 0.2s;
+            transform: translateZ(0); contain: layout style;
           }
           .open-banner:hover { background: rgba(15,23,42,0.85); color: rgba(203,213,225,0.9); }
           .banner-dot { width: 5px; height: 5px; border-radius: 50%; background: #34d399; box-shadow: 0 0 7px rgba(52,211,153,0.8), 0 0 16px rgba(52,211,153,0.3); flex-shrink: 0; animation: dot-pulse 2.4s ease-in-out infinite; }
@@ -1206,7 +1209,8 @@ function App() {
             backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%);
             border: 0.5px solid rgba(255,255,255,0.08); border-radius: 20px;
             box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 8px 24px rgba(0,0,0,0.25), 0 28px 56px rgba(0,0,0,0.3);
-            transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            transform: translateZ(0);
           }
           .glass-card:hover { border-color: rgba(56,189,248,0.14); box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 10px 28px rgba(0,0,0,0.28), 0 36px 64px rgba(0,0,0,0.35), 0 0 40px rgba(56,189,248,0.04); }
 

@@ -21,6 +21,9 @@ dist/
 .DS_Store
 Thumbs.db
 
+# Superpowers brainstorm sessions
+.superpowers/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
