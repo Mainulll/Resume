@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useId, Suspense } from 'react'
+import { useState, useEffect, useRef, useId } from 'react'
 import { motion, AnimatePresence, useInView, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion'
 import { LoadingGem, NavGem } from './Scene3D'
 
@@ -455,9 +455,7 @@ function Navbar() {
             aria-label="Page navigation"
           >
             <div className="site-nav-pill">
-              <Suspense fallback={null}>
-                <NavGem />
-              </Suspense>
+              <NavGem />
               {NAV_LINKS.map((l) => (
                 <a
                   key={l.label}
@@ -542,9 +540,7 @@ function LoadingScreen() {
         exit={{ opacity: 0, scale: 1.05, filter: 'blur(20px)', transition: { duration: 0.5, ease } }}
         transition={{ duration: 0.7, ease }}
       >
-        <Suspense fallback={null}>
-          <LoadingGem />
-        </Suspense>
+        <LoadingGem />
       </motion.div>
 
       <motion.p
@@ -1058,7 +1054,7 @@ function App() {
             gap: 0.6rem; background: #020617;
           }
           .loading-inner { display: flex; flex-direction: column; align-items: center; margin-bottom: 0.2rem; }
-          .loading-gem-canvas { width: 120px; height: 140px; filter: drop-shadow(0 4px 24px rgba(56,189,248,0.35)) drop-shadow(0 0 50px rgba(139,92,246,0.18)); }
+          .loading-gem-canvas { display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 4px 20px rgba(56,189,248,0.35)) drop-shadow(0 0 44px rgba(139,92,246,0.2)); }
           .loading-name { font-size: 1.14rem; font-weight: 600; letter-spacing: -0.02em; color: rgba(241,245,249,0.88); }
           .loading-sub { font-size: 0.71rem; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: rgba(56,189,248,0.4); }
 
@@ -1076,7 +1072,7 @@ function App() {
             border: 0.5px solid rgba(255,255,255,0.08); border-radius: 100px;
             box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 8px 24px rgba(0,0,0,0.4);
           }
-          .nav-gem-canvas { width: 26px; height: 30px; margin-right: 0.25rem; flex-shrink: 0; }
+          .nav-gem-canvas { display: flex; align-items: center; margin-right: 0.25rem; flex-shrink: 0; }
           .nav-link { padding: 0.38rem 0.78rem; border-radius: 100px; font-size: 0.75rem; font-weight: 500; color: rgba(148,163,184,0.5); text-decoration: none; transition: color 0.18s, background 0.18s; }
           .nav-link:hover { color: rgba(203,213,225,0.86); background: rgba(255,255,255,0.05); }
           .nav-link.nav-active { background: rgba(56,189,248,0.12); color: rgba(56,189,248,0.9); }

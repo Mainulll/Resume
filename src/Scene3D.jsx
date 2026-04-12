@@ -1,184 +1,161 @@
-import { useRef, useEffect, useMemo } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Float, MeshTransmissionMaterial } from '@react-three/drei'
-import * as THREE from 'three'
+import { useId } from 'react'
+import { motion } from 'framer-motion'
 
-/* ── Gem Geometry ───────────────────────────────────────────────────────
-   Custom diamond/gem shape — a cut gemstone with crown (top) and
-   pavilion (bottom). Matches the visual identity of the SVG LogoMark.
+/* ── Gem Mark ──────────────────────────────────────────────────────────
+   Polished 2D diamond gem — multi-facet design with cyan/violet gradient
+   palette. Animated glow, subtle float, and slow shimmer effect.
+   useId() scopes gradient IDs per instance (avoids SVG ID collisions).
 ─────────────────────────────────────────────────────────────────────── */
-function createGemGeometry() {
-  const vertices = []
-  const indices = []
-  const sides = 8
-  const crownHeight = 0.45
-  const pavilionDepth = 0.9
-  const tableRadius = 0.38
-  const girdleRadius = 0.7
-  const topPoint = crownHeight
-  const girdleY = 0
-  const bottomPoint = -pavilionDepth
 
-  // Top point
-  vertices.push(0, topPoint, 0) // 0
-
-  // Table ring (top inner ring)
-  for (let i = 0; i < sides; i++) {
-    const angle = (i / sides) * Math.PI * 2
-    vertices.push(
-      Math.cos(angle) * tableRadius,
-      topPoint * 0.65,
-      Math.sin(angle) * tableRadius
-    )
-  } // 1..sides
-
-  // Girdle ring (widest point)
-  for (let i = 0; i < sides; i++) {
-    const angle = (i / sides) * Math.PI * 2 + Math.PI / sides
-    vertices.push(
-      Math.cos(angle) * girdleRadius,
-      girdleY,
-      Math.sin(angle) * girdleRadius
-    )
-  } // (sides+1)..(2*sides)
-
-  // Bottom point (culet)
-  vertices.push(0, bottomPoint, 0) // 2*sides + 1
-
-  const topIdx = 0
-  const tableStart = 1
-  const girdleStart = sides + 1
-  const bottomIdx = 2 * sides + 1
-
-  // Crown faces: top → table ring
-  for (let i = 0; i < sides; i++) {
-    const next = (i + 1) % sides
-    indices.push(topIdx, tableStart + i, tableStart + next)
-  }
-
-  // Crown sides: table ring → girdle ring
-  for (let i = 0; i < sides; i++) {
-    const next = (i + 1) % sides
-    indices.push(tableStart + i, girdleStart + i, tableStart + next)
-    indices.push(tableStart + next, girdleStart + i, girdleStart + ((i + 1) % sides))
-  }
-
-  // Pavilion faces: girdle ring → bottom
-  for (let i = 0; i < sides; i++) {
-    const next = (i + 1) % sides
-    indices.push(girdleStart + i, bottomIdx, girdleStart + next)
-  }
-
-  const geometry = new THREE.BufferGeometry()
-  geometry.setAttribute(
-    'position',
-    new THREE.Float32BufferAttribute(vertices, 3)
-  )
-  geometry.setIndex(indices)
-  geometry.computeVertexNormals()
-  return geometry
-}
-
-/* ── Interactive Gem ────────────────────────────────────────────────────
-   Slowly rotates on Y axis. If mouse ref provided, also reacts to
-   cursor position with smooth lerped rotation offsets.
-─────────────────────────────────────────────────────────────────────── */
-function GemMesh({ mouse, autoOnly = false, scale = 1 }) {
-  const ref = useRef()
-  const target = useRef({ x: 0, y: 0 })
-  const geometry = useMemo(() => createGemGeometry(), [])
-
-  useFrame((_, delta) => {
-    if (!ref.current) return
-    // Slow continuous Y rotation
-    ref.current.rotation.y += delta * 0.4
-
-    if (!autoOnly && mouse?.current) {
-      // Mouse-reactive rotation
-      target.current.x += (mouse.current[0] * 0.3 - target.current.x) * 0.05
-      target.current.y += (mouse.current[1] * 0.3 - target.current.y) * 0.05
-      ref.current.rotation.x = -target.current.y + 0.15
-      ref.current.rotation.z = target.current.x * 0.15
-    }
-  })
-
-  return (
-    <Float speed={1.2} rotationIntensity={autoOnly ? 0.04 : 0.06} floatIntensity={autoOnly ? 0.1 : 0.25}>
-      <mesh ref={ref} geometry={geometry} scale={scale}>
-        <MeshTransmissionMaterial
-          backside
-          backsideThickness={0.35}
-          samples={autoOnly ? 6 : 12}
-          thickness={0.22}
-          chromaticAberration={0.03}
-          anisotropy={0.1}
-          distortion={0.05}
-          distortionScale={0.2}
-          temporalDistortion={0.03}
-          iridescence={autoOnly ? 0 : 0.4}
-          iridescenceIOR={1.5}
-          iridescenceThicknessRange={[0, 1400]}
-          clearcoat={1}
-          clearcoatRoughness={0.04}
-          color="#c8d8ff"
-          transmission={0.96}
-          roughness={0.05}
-          metalness={0}
-          attenuationDistance={0.6}
-          attenuationColor="#88ccff"
-        />
-      </mesh>
-    </Float>
-  )
-}
-
-/* ── Loading Gem (large, interactive) ──────────────────────────────── */
 export function LoadingGem() {
-  const mouse = useRef([0, 0])
-
-  useEffect(() => {
-    const handleMove = (e) => {
-      const x = (e.clientX / globalThis.innerWidth) * 2 - 1
-      const y = -(e.clientY / globalThis.innerHeight) * 2 + 1
-      mouse.current = [x, y]
-    }
-    globalThis.addEventListener('pointermove', handleMove)
-    return () => globalThis.removeEventListener('pointermove', handleMove)
-  }, [])
+  const uid = useId().replace(/:/g, '_')
+  const noMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
   return (
-    <div className="loading-gem-canvas" aria-hidden="true">
-      <Canvas
-        camera={{ position: [0, 0, 3.2], fov: 45 }}
-        gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
-        dpr={[1, 1.5]}
+    <div className="loading-gem-canvas">
+      <motion.svg
+        width={100}
+        height={117}
+        viewBox="0 0 100 117"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        animate={noMotion ? undefined : { y: [0, -6, 0] }}
+        transition={noMotion ? undefined : { duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
       >
-        <ambientLight intensity={0.4} color="#88aacc" />
-        <directionalLight position={[5, 8, 5]} intensity={3.5} color="#ffffff" />
-        <directionalLight position={[-4, 3, 4]} intensity={1.5} color="#38bdf8" />
-        <directionalLight position={[0, -4, 5]} intensity={1.0} color="#a78bfa" />
-        <pointLight position={[2, 2, 3]} intensity={1.2} color="#38bdf8" distance={10} decay={2} />
-        <pointLight position={[-2, -1, 2]} intensity={0.7} color="#8b5cf6" distance={8} decay={2} />
-        <GemMesh mouse={mouse} scale={1} />
-      </Canvas>
+        <defs>
+          {/* Top-left facet — cyan to indigo */}
+          <linearGradient id={`${uid}_tl`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#67e8f9" />
+            <stop offset="100%" stopColor="#818cf8" />
+          </linearGradient>
+          {/* Top-right facet — indigo to violet */}
+          <linearGradient id={`${uid}_tr`} x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#a5b4fc" />
+            <stop offset="100%" stopColor="#8b5cf6" />
+          </linearGradient>
+          {/* Bottom-left facet — deep indigo */}
+          <linearGradient id={`${uid}_bl`} x1="0%" y1="0%" x2="40%" y2="100%">
+            <stop offset="0%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#1e1b4b" />
+          </linearGradient>
+          {/* Bottom-right facet — violet to dark */}
+          <linearGradient id={`${uid}_br`} x1="100%" y1="0%" x2="60%" y2="100%">
+            <stop offset="0%" stopColor="#7c3aed" />
+            <stop offset="100%" stopColor="#0f172a" />
+          </linearGradient>
+          {/* Shimmer sweep */}
+          <linearGradient id={`${uid}_shimmer`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="45%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="50%" stopColor="rgba(255,255,255,0.15)" />
+            <stop offset="55%" stopColor="rgba(255,255,255,0)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+            {!noMotion && (
+              <animateTransform
+                attributeName="gradientTransform"
+                type="translate"
+                from="-1 -1"
+                to="1 1"
+                dur="3.5s"
+                repeatCount="indefinite"
+              />
+            )}
+          </linearGradient>
+          {/* Glow filter */}
+          <filter id={`${uid}_glow`} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feFlood floodColor="#38bdf8" floodOpacity="0.3" />
+            <feComposite in2="blur" operator="in" />
+            <feMerge>
+              <feMergeNode />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <g filter={`url(#${uid}_glow)`}>
+          {/* Crown — top left */}
+          <polygon points="50,4 8,42 50,52" fill={`url(#${uid}_tl)`} />
+          {/* Crown — top right */}
+          <polygon points="50,4 50,52 92,42" fill={`url(#${uid}_tr)`} opacity="0.9" />
+          {/* Pavilion — bottom left */}
+          <polygon points="8,42 50,52 50,113" fill={`url(#${uid}_bl)`} opacity="0.95" />
+          {/* Pavilion — bottom right */}
+          <polygon points="50,52 92,42 50,113" fill={`url(#${uid}_br)`} />
+
+          {/* Inner facet lines */}
+          <line x1="8" y1="42" x2="92" y2="42" stroke="rgba(165,180,252,0.15)" strokeWidth="0.5" />
+          <line x1="50" y1="4" x2="50" y2="113" stroke="rgba(165,180,252,0.07)" strokeWidth="0.5" />
+          <line x1="8" y1="42" x2="50" y2="52" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
+          <line x1="92" y1="42" x2="50" y2="52" stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
+
+          {/* Highlight facet — top-left sparkle */}
+          <polygon points="50,4 8,42 29,23" fill="rgba(255,255,255,0.14)" />
+
+          {/* Outer stroke */}
+          <polygon
+            points="50,4 92,42 50,113 8,42"
+            fill="none"
+            stroke="rgba(165,180,252,0.22)"
+            strokeWidth="0.6"
+            strokeLinejoin="round"
+          />
+
+          {/* Shimmer overlay */}
+          <polygon
+            points="50,4 92,42 50,113 8,42"
+            fill={`url(#${uid}_shimmer)`}
+            opacity="0.6"
+          />
+        </g>
+      </motion.svg>
     </div>
   )
 }
 
-/* ── Navbar Gem (mini, auto-rotate only) ───────────────────────────── */
 export function NavGem() {
+  const uid = useId().replace(/:/g, '_')
+
   return (
-    <div className="nav-gem-canvas" aria-hidden="true">
-      <Canvas
-        camera={{ position: [0, 0, 3.2], fov: 45 }}
-        gl={{ alpha: true, antialias: true, powerPreference: 'low-power' }}
-        dpr={[1, 1]}
+    <div className="nav-gem-canvas">
+      <svg
+        width={22}
+        height={26}
+        viewBox="0 0 100 117"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
       >
-        <ambientLight intensity={0.5} color="#88aacc" />
-        <directionalLight position={[5, 6, 5]} intensity={2.5} color="#ffffff" />
-        <directionalLight position={[-3, 2, 3]} intensity={1.0} color="#38bdf8" />
-        <GemMesh autoOnly scale={0.9} />
-      </Canvas>
+        <defs>
+          <linearGradient id={`${uid}_ntl`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#67e8f9" />
+            <stop offset="100%" stopColor="#818cf8" />
+          </linearGradient>
+          <linearGradient id={`${uid}_ntr`} x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#a5b4fc" />
+            <stop offset="100%" stopColor="#8b5cf6" />
+          </linearGradient>
+          <linearGradient id={`${uid}_nbl`} x1="0%" y1="0%" x2="40%" y2="100%">
+            <stop offset="0%" stopColor="#6366f1" />
+            <stop offset="100%" stopColor="#1e1b4b" />
+          </linearGradient>
+          <linearGradient id={`${uid}_nbr`} x1="100%" y1="0%" x2="60%" y2="100%">
+            <stop offset="0%" stopColor="#7c3aed" />
+            <stop offset="100%" stopColor="#0f172a" />
+          </linearGradient>
+        </defs>
+        <polygon points="50,4 8,42 50,52" fill={`url(#${uid}_ntl)`} />
+        <polygon points="50,4 50,52 92,42" fill={`url(#${uid}_ntr)`} opacity="0.9" />
+        <polygon points="8,42 50,52 50,113" fill={`url(#${uid}_nbl)`} opacity="0.95" />
+        <polygon points="50,52 92,42 50,113" fill={`url(#${uid}_nbr)`} />
+        <polygon points="50,4 8,42 29,23" fill="rgba(255,255,255,0.14)" />
+        <polygon
+          points="50,4 92,42 50,113 8,42"
+          fill="none"
+          stroke="rgba(165,180,252,0.22)"
+          strokeWidth="0.8"
+          strokeLinejoin="round"
+        />
+      </svg>
     </div>
   )
 }
