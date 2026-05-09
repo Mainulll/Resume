@@ -7,8 +7,7 @@ const data = {
   resumePdf: '/MinulLokuliyana_Resume.pdf',
   location: 'Melbourne, Australia',
   role: 'Business Analytics & Cybersecurity · Monash University',
-  openTo: 'Open to graduate roles — project & programme management, analytics, strategy · Nov 2026',
-  pitch: "I run cross-functional projects — the kind that need someone who can sit with engineers, suppliers, and senior stakeholders and get them aligned, then build the tooling when waiting isn't faster. Six industries, 11+ years of leadership, currently coordinating procurement and inventory at BSH while finishing dual degrees in Business Analytics and Cybersecurity at Monash.",
+  openTo: 'Looking for graduate roles from November 2026. Project management, analytics, strategy.',
   contact: {
     email: 'minullokuliyana@hotmail.com',
     mobile: '+61 402 528 040',
@@ -23,10 +22,10 @@ const data = {
       period: 'Jan 2026 – Present',
       location: 'Melbourne, VIC',
       bullets: [
-        'Own $50M+ of national inventory across AU/NZ for Bosch, Siemens, Neff, and Gaggenau in SAP — stock transfers, allocations, project reservations, 3PL coordination — driving backorder rates down.',
-        'Built the Customer Level Forecasting tool and a Python pipeline replacing the legacy PSI Tool import, consolidating retailer forecasts across national accounts and cutting data processing from hours to minutes.',
-        'Partner with procurement and sales to ship Power BI dashboards, Excel/VBA automation, and Python reporting across 500+ SKUs — manual reporting down ~25%.',
-        'Run cost-benefit analyses and scenario plans behind procurement recommendations; led inventory audits and master-data validation across 3 DCs for senior stakeholders.',
+        'Coordinate national inventory across AU/NZ for Bosch, Siemens, Neff, and Gaggenau in SAP. Stock transfers, allocations, project reservations, and 3PL coordination, working closely with procurement, sales, and external partners to keep everything on track.',
+        'Built the Customer Level Forecasting tool and a Python pipeline that replaced the legacy PSI Tool import process. Cut data processing from hours to minutes and gave the team back time for actual analysis.',
+        'Partner with procurement and sales to ship Power BI dashboards, Excel/VBA automation, and Python reporting. Manual reporting is down by about a quarter, and people now look at the dashboards instead of asking for spreadsheets.',
+        'Run cost-benefit analyses and scenario plans behind procurement decisions. Led inventory audits and master-data validation across three distribution centres for senior stakeholders.',
       ],
     },
     {
@@ -35,9 +34,9 @@ const data = {
       period: 'Jan 2025 – Jan 2026',
       location: 'Melbourne, VIC',
       bullets: [
-        'Coordinated two concurrent development programmes for regional markets, owning on-time delivery across cross-functional engineering teams and multiple workstreams.',
-        'Led end-to-end RFQs with 30+ suppliers — capability benchmarking, risk assessment, commercial negotiation — landing cost-reduction initiatives that contributed six-figure annual savings.',
-        'Built Python automation and agentic AI workflows across 3 functions; designed Power BI dashboards lifting programme visibility for APAC procurement across 10+ markets and 50+ categories.',
+        'Coordinated two concurrent development programmes for regional markets. I owned on-time delivery across cross-functional engineering teams and was the connective tissue between technical, commercial, and operational sides.',
+        'Led end-to-end RFQs with 30+ suppliers, covering capability benchmarking, risk assessment, and commercial negotiation. The cost-reduction initiatives I landed contributed six-figure annual savings.',
+        'Built Python automation and agentic AI workflows across three functions. Designed Power BI dashboards that lifted programme visibility for APAC procurement across more than ten markets and fifty categories.',
       ],
     },
     {
@@ -46,7 +45,7 @@ const data = {
       period: 'Jun 2024 – Dec 2024',
       location: 'Melbourne, VIC',
       bullets: [
-        'Designed Python and R data pipelines processing 100K+ records through hypothesis-driven analysis, improving throughput 3× and contributing to one peer-reviewed publication.',
+        'Designed Python and R data pipelines that processed 100K+ records through hypothesis-driven analysis. Improved throughput 3× and contributed to one peer-reviewed publication.',
       ],
     },
     {
@@ -55,8 +54,8 @@ const data = {
       period: 'Aug 2022 – Sep 2024',
       location: 'Melbourne, VIC',
       bullets: [
-        'Ranked #1 nationally in sales for two consecutive years; broke the single-day floorcare sales record.',
-        'Selected as exclusive content creator for branded launches — the role rewards turning technical product detail into customer language at speed.',
+        'Ranked #1 nationally in sales for two consecutive years. Broke the single-day floorcare sales record.',
+        'Selected as exclusive content creator for branded product launches. The role rewards turning technical product detail into customer language at speed, which is most of what I still do today.',
       ],
     },
     {
@@ -65,13 +64,13 @@ const data = {
       period: 'Feb 2023 – May 2024',
       location: 'Melbourne, VIC',
       bullets: [
-        'Owned client onboarding, data migration, and campaign coordination for a cloud SaaS platform across 200+ SME clients; insights drove 15%+ engagement uplift.',
+        'Owned client onboarding, data migration, and campaign coordination for a cloud SaaS platform across 200+ SME clients. The insights I delivered drove 15%+ engagement uplift.',
       ],
     },
   ],
   pillars: [
     {
-      title: 'Programme & Project Management',
+      title: 'Project & Programme Management',
       items: ['Programme delivery', 'Stakeholder engagement', 'Risk assessment', 'Cost-benefit analysis', 'Scenario planning', 'Cross-functional coordination', 'Lean Six Sigma', 'Agile', 'Procurement strategy'],
     },
     {
@@ -83,7 +82,7 @@ const data = {
       items: ['Prompt engineering', 'Agentic AI workflows', 'LLM integration', 'GPT-4o', 'Mistral', 'Gemini', 'Process automation', 'Data pipelines'],
     },
     {
-      title: 'Cloud, Tooling & Certifications',
+      title: 'Cloud, Tools & Certifications',
       items: ['Azure', 'AWS', 'GCP', 'Docker', 'Kubernetes', 'Kali Linux', 'Burp Suite', 'Salesforce', 'Jira', 'Confluence', 'ServiceNow', 'CPP', 'Lean Six Sigma Yellow Belt'],
     },
   ],
@@ -92,7 +91,7 @@ const data = {
       name: 'Previa',
       subtitle: 'AI Financial Intelligence Platform',
       role: 'Co-Founder',
-      description: 'Co-founded and shipped an AI platform that reconciles receipts for small businesses at 90%+ accuracy. Owned product, engineering, and go-to-market end-to-end.',
+      description: 'I co-founded and shipped this. An AI platform that reconciles receipts for small businesses at 90%+ accuracy. I owned product, engineering, and go-to-market end to end.',
       tech: 'React · TypeScript · Supabase · Python · LLMs',
       link: 'https://github.com/demigod97/Previa-2.0',
       linkLabel: 'View on GitHub',
@@ -101,7 +100,7 @@ const data = {
       name: 'GymBro',
       subtitle: 'AI-Powered Fitness App',
       role: 'Solo Developer',
-      description: 'Solo build of an offline-first mobile fitness app on React Native + Expo. Most of the implementation came from agentic AI under my direction — the workflow itself is the project.',
+      description: "Solo build. Offline-first mobile fitness app on React Native and Expo. Most of the implementation came from agentic AI under my direction. The workflow itself is the project.",
       tech: 'React Native · Expo · TypeScript · SQLite · Zustand · Firebase',
       link: 'https://github.com/Mainulll/Gymbro-App',
       linkLabel: 'View on GitHub',
@@ -110,7 +109,7 @@ const data = {
       name: 'Borealis Creative Group',
       subtitle: 'Digital Strategy',
       role: 'Project Lead',
-      description: 'Led concurrent digital programmes for franchise clients — web build, SEO, paid media. Lifted organic traffic 40% across the portfolio.',
+      description: 'I led concurrent digital programmes for franchise clients. Web build, SEO, paid media. Lifted organic traffic by 40% across the portfolio.',
       tech: 'Figma · Web design · SEO · Analytics',
       link: 'https://docs.google.com/document/d/1s_JRAy8o3LNFfrVgoeCC3s_PzByHTtMg6zqxtgM6BxU/edit?tab=t.0',
       linkLabel: 'View Demos',
@@ -123,28 +122,28 @@ const data = {
     majors: 'Business Analytics · Cybersecurity',
     coursework: 'Coursework: machine learning, econometrics, statistical modelling, data visualisation, database systems, risk management.',
     highlights: [
-      'Innovation for Impact Award (2024) — university-wide AI design award, judged on commercial viability, technical rigour, and societal impact.',
-      'Global Immersion (Fiji) + Innovation Guarantee (Microsoft) — led two cross-cultural consulting engagements: UN SDG-aligned project delivery and AI-driven stakeholder experience prototypes.',
+      'Innovation for Impact Award (2024). University-wide AI design award judged on commercial viability, technical rigour, and societal impact.',
+      'Global Immersion (Fiji) and Innovation Guarantee (Microsoft). Led two cross-cultural consulting engagements: UN SDG-aligned project delivery and AI-driven stakeholder experience prototypes.',
     ],
   },
   leadership: [
     {
       title: 'Programme Coordinator',
       org: 'Preflight STEM Initiative',
-      period: '2024–Present',
-      description: 'Founder. Self-funded STEM outreach for underrepresented students in Sri Lanka — I run the volunteer team, the curriculum, and the programme delivery.',
+      period: '2024 – Present',
+      description: 'Founder, self-funded. STEM outreach for underrepresented students in Sri Lanka. I run the volunteer team, the curriculum, and the programme delivery.',
     },
     {
       title: 'Officer',
       org: 'Australian Air League',
-      period: '2014–Present',
-      description: '11+ years of youth leadership in aviation and civic education within a defence-aligned organisation. Mentored cadets and coordinated squadron operations.',
+      period: '2014 – Present',
+      description: 'Eleven-plus years of youth leadership in aviation and civic education within a defence-aligned organisation. Mentored cadets and coordinated squadron operations.',
     },
     {
       title: 'Basketball Coach',
       org: 'Basketball Victoria / Waverley Raiders',
-      period: '2017–2025',
-      description: 'Coached junior teams for 8 years through state-level competitions.',
+      period: '2017 – 2025',
+      description: 'Coached junior teams for eight years through state-level competitions.',
     },
     {
       title: 'Student Fundraiser',
@@ -202,7 +201,7 @@ function FadeUp({ children, delay = 0, as: Tag = 'div' }) {
       initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ duration: 0.35, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.45, delay, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}
     </Component>
@@ -212,9 +211,9 @@ function FadeUp({ children, delay = 0, as: Tag = 'div' }) {
 /* ── Brand mark ───────────────────────────────────────────────────── */
 function BrandMark() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 2 L22 12 L12 22 L2 12 Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="M12 2 L12 22 M2 12 L22 12" stroke="currentColor" strokeWidth="0.8" strokeLinejoin="round" opacity="0.4" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2 L22 12 L12 22 L2 12 Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <path d="M12 7 L17 12 L12 17 L7 12 Z" fill="currentColor" opacity="0.9" />
     </svg>
   )
 }
@@ -233,6 +232,16 @@ function MoonIcon() {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
     </svg>
+  )
+}
+
+/* ── Section header (numbered eyebrow + title) ────────────────────── */
+function SectionHeader({ num, children }) {
+  return (
+    <header className="section-header">
+      <p className="section-num">{num}</p>
+      <h2>{children}</h2>
+    </header>
   )
 }
 
@@ -355,14 +364,16 @@ function Hero() {
         <h1>{data.name}</h1>
         <p className="hero-rolepill">{data.role}</p>
         <p className="chip hero-chip"><span className="chip-dot" aria-hidden="true" />{data.openTo}</p>
-        <p className="hero-pitch">{data.pitch}</p>
+        <p className="hero-pitch">
+          I'm a project coordinator. I keep cross-functional teams aligned and ship high-value projects on time. Communication, organisation, and stakeholder management are where I'm strongest, and I have a soft spot for the unglamorous process improvements that quietly compound. <em>Currently</em> finishing my Business Analytics and Cybersecurity degrees at Monash.
+        </p>
         <div className="hero-cta-row" ref={wrapRef}>
           <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
             Download Resume
           </a>
           {!contactOpen ? (
             <button type="button" className="btn btn-secondary" onClick={() => setContactOpen(true)}>
-              Contact
+              Get in touch
             </button>
           ) : (
             <>
@@ -380,10 +391,12 @@ function Hero() {
     </section>
   )
 }
+
+/* ── Sections ─────────────────────────────────────────────────────── */
 function Experience() {
   return (
     <section id="experience" className="container section">
-      <FadeUp><h2 className="section-title">Experience</h2></FadeUp>
+      <FadeUp><SectionHeader num="01">Experience</SectionHeader></FadeUp>
       <div className="experience-list">
         {data.experience.map((exp, i) => (
           <FadeUp key={exp.company} delay={i * 0.05}>
@@ -404,10 +417,11 @@ function Experience() {
     </section>
   )
 }
+
 function Skills() {
   return (
     <section id="skills" className="container section">
-      <FadeUp><h2 className="section-title">Skills</h2></FadeUp>
+      <FadeUp><SectionHeader num="02">Skills</SectionHeader></FadeUp>
       <div className="pillars-grid">
         {data.pillars.map((pillar, i) => (
           <FadeUp key={pillar.title} delay={i * 0.05}>
@@ -427,13 +441,15 @@ function Skills() {
 function Projects() {
   return (
     <section id="projects" className="container section">
-      <FadeUp><h2 className="section-title">Projects</h2></FadeUp>
+      <FadeUp><SectionHeader num="03">Projects</SectionHeader></FadeUp>
       <div className="project-list">
         {data.projects.map((p, i) => (
           <FadeUp key={p.name} delay={i * 0.05}>
             <article className="card project-card">
               <p className="project-role">{p.role}</p>
-              <h3>{p.name} <span className="muted" style={{ fontWeight: 500 }}>— {p.subtitle}</span></h3>
+              <h3>
+                {p.name} <span className="project-subtitle">{p.subtitle}</span>
+              </h3>
               <p>{p.description}</p>
               <p className="project-tech">{p.tech}</p>
               {p.link && (
@@ -450,7 +466,7 @@ function Projects() {
 function Education() {
   return (
     <section id="education" className="container section">
-      <FadeUp><h2 className="section-title">Education</h2></FadeUp>
+      <FadeUp><SectionHeader num="04">Education</SectionHeader></FadeUp>
       <FadeUp delay={0.05}>
         <article className="card edu-card">
           <h3>{data.education.degree}</h3>
@@ -469,12 +485,14 @@ function Education() {
 function Leadership() {
   return (
     <section id="leadership" className="container section">
-      <FadeUp><h2 className="section-title">Leadership &amp; Impact</h2></FadeUp>
+      <FadeUp><SectionHeader num="05">Leadership &amp; Impact</SectionHeader></FadeUp>
       <div className="leadership-list">
         {data.leadership.map((item, i) => (
           <FadeUp key={item.org} delay={i * 0.04}>
             <article className="card leadership-card">
-              <h3>{item.title} · <span className="muted" style={{ fontWeight: 500 }}>{item.org}</span></h3>
+              <h3>
+                {item.title} <span className="leadership-org">· {item.org}</span>
+              </h3>
               <p className="exp-meta">{item.period}</p>
               <p style={{ marginTop: '0.5rem' }}>{item.description}</p>
             </article>
@@ -484,10 +502,11 @@ function Leadership() {
     </section>
   )
 }
+
 function Footer() {
   return (
     <footer id="contact" className="container footer">
-      <p className="muted" style={{ fontSize: '0.9375rem' }}>{data.name}</p>
+      <p className="footer-mark">{data.name}</p>
       <p className="footer-tagline">Let's talk.</p>
       <nav className="footer-links" aria-label="Contact">
         <a href={`mailto:${data.contact.email}`}>Email</a>
