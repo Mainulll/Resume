@@ -3,38 +3,47 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Minul Lokuliyana — Business Analytics & Cybersecurity at Monash University. Cross-industry experience spanning supply chain, AI automation, and data analytics. Open to new challenges." />
+    <meta name="description" content="Project coordinator and Monash dual-degree candidate (Business Analytics & Cybersecurity). Cross-functional delivery across six industries — supply chain, retail, research, SaaS, AI start-ups." />
     <meta name="author" content="Minul Lokuliyana" />
-    <meta name="theme-color" content="#020617" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Minul Lokuliyana · Analytics & Impact" />
-    <meta property="og:description" content="Turning complexity into clarity across supply chain, analytics, and AI. Monash University dual-degree candidate open to new challenges." />
+    <meta property="og:title" content="Minul Lokuliyana — Project & Programme Coordinator" />
+    <meta property="og:description" content="Project coordinator and Monash dual-degree candidate (Business Analytics & Cybersecurity). Cross-functional delivery across six industries." />
     <meta property="og:image" content="/og-image.png" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Minul Lokuliyana · Analytics & Impact" />
-    <meta name="twitter:description" content="Turning complexity into clarity across supply chain, analytics, and AI. Monash University dual-degree candidate open to new challenges." />
+    <meta name="twitter:title" content="Minul Lokuliyana — Project & Programme Coordinator" />
+    <meta name="twitter:description" content="Project coordinator and Monash dual-degree candidate (Business Analytics & Cybersecurity). Cross-functional delivery across six industries." />
 
-    <!-- Performance: preconnect to font origin, preload the font CSS -->
+    <!-- Fonts: preconnect + preload + non-blocking stylesheet -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
 
-    <!-- DNS prefetch for external links -->
     <link rel="dns-prefetch" href="https://linkedin.com" />
     <link rel="dns-prefetch" href="https://github.com" />
 
-    <!-- Instant background paint while JS loads -->
-    <style>
-      body { background: #020617; margin: 0; }
-    </style>
+    <!-- Pre-paint theme: must run before body to avoid flash -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t !== 'light' && t !== 'dark') {
+            t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
 
-    <title>Minul Lokuliyana · Analytics & Impact</title>
+    <title>Minul Lokuliyana — Business Analytics &amp; Cybersecurity · Monash</title>
   </head>
   <body>
     <div id="root"></div>
