@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 /* ── Resume Data ──────────────────────────────────────────────────── */
 const data = {
@@ -131,7 +131,7 @@ const data = {
       title: 'Programme Coordinator',
       org: 'Preflight STEM Initiative',
       period: '2024 – Present',
-      description: 'Founder, self-funded. STEM outreach for underrepresented students in Sri Lanka. I run the volunteer team, the curriculum, and the programme delivery.',
+      description: "Founder, purely self-funded. Preflight partners with local institutions in Sri Lanka to get school and educational supplies to children who don't otherwise have access. I run the volunteer team and own programme delivery end to end.",
     },
     {
       title: 'Officer',
@@ -205,6 +205,35 @@ function FadeUp({ children, delay = 0, as: Tag = 'div' }) {
     >
       {children}
     </Component>
+  )
+}
+
+/* ── Name reveal (Apple-style character cascade) ──────────────────── */
+function NameReveal({ name, startDelay = 0.18 }) {
+  const reduce = useReducedMotion()
+  if (reduce) return <h1>{name}</h1>
+
+  const chars = Array.from(name)
+  return (
+    <h1 aria-label={name} className="hero-name">
+      <span aria-hidden="true">
+        {chars.map((c, i) => (
+          <motion.span
+            key={`${c}-${i}`}
+            className="hero-name-char"
+            initial={{ opacity: 0, y: 10, filter: 'blur(7px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{
+              duration: 0.55,
+              delay: startDelay + i * 0.035,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+          >
+            {c === ' ' ? ' ' : c}
+          </motion.span>
+        ))}
+      </span>
+    </h1>
   )
 }
 
@@ -359,9 +388,22 @@ function Hero() {
 
   return (
     <section id="top" className="container hero">
-      <FadeUp>
-        <p className="eyebrow hero-eyebrow">{data.location}</p>
-        <h1>{data.name}</h1>
+      <motion.p
+        className="eyebrow hero-eyebrow"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {data.location}
+      </motion.p>
+
+      <NameReveal name={data.name} startDelay={0.18} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.95, ease: [0.22, 1, 0.36, 1] }}
+      >
         <p className="hero-rolepill">{data.role}</p>
         <p className="chip hero-chip"><span className="chip-dot" aria-hidden="true" />{data.openTo}</p>
         <p className="hero-pitch">
@@ -370,6 +412,9 @@ function Hero() {
         <div className="hero-cta-row" ref={wrapRef}>
           <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
             Download Resume
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M7 1v8M4 6l3 3 3-3M2 12h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </a>
           {!contactOpen ? (
             <button type="button" className="btn btn-secondary" onClick={() => setContactOpen(true)}>
@@ -387,7 +432,7 @@ function Hero() {
           <a href={data.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
           <a href={`mailto:${data.contact.email}`}>Email</a>
         </nav>
-      </FadeUp>
+      </motion.div>
     </section>
   )
 }
