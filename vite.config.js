@@ -5,7 +5,6 @@ export default defineConfig({
   plugins: [react()],
   build: {
     target: 'esnext',
-    cssMinify: 'lightningcss',
     rollupOptions: {
       output: {
         manualChunks: {
