@@ -336,13 +336,47 @@ function Nav() {
   )
 }
 
-/* ── Section placeholders (filled in later tasks) ─────────────────── */
+/* ── Hero ─────────────────────────────────────────────────────────── */
 function Hero() {
+  const [contactOpen, setContactOpen] = useState(false)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    if (!contactOpen) return
+    const onDown = (e) => { if (!wrapRef.current?.contains(e.target)) setContactOpen(false) }
+    document.addEventListener('pointerdown', onDown)
+    return () => document.removeEventListener('pointerdown', onDown)
+  }, [contactOpen])
+
   return (
     <section id="top" className="container hero">
-      <p className="eyebrow hero-eyebrow">{data.location}</p>
-      <h1>{data.name}</h1>
-      <p className="muted">{data.role}</p>
+      <FadeUp>
+        <p className="eyebrow hero-eyebrow">{data.location}</p>
+        <h1>{data.name}</h1>
+        <p className="hero-rolepill">{data.role}</p>
+        <p className="chip hero-chip"><span className="chip-dot" aria-hidden="true" />{data.openTo}</p>
+        <p className="hero-pitch">{data.pitch}</p>
+        <div className="hero-cta-row" ref={wrapRef}>
+          <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
+            Download Resume
+          </a>
+          {!contactOpen ? (
+            <button type="button" className="btn btn-secondary" onClick={() => setContactOpen(true)}>
+              Contact
+            </button>
+          ) : (
+            <>
+              <a href={`tel:${data.contact.mobile}`} className="btn btn-secondary">Mobile</a>
+              <a href={`mailto:${data.contact.email}`} className="btn btn-secondary">Email</a>
+            </>
+          )}
+        </div>
+        <nav className="hero-links" aria-label="Profiles">
+          <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href={data.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href={`mailto:${data.contact.email}`}>Email</a>
+        </nav>
+      </FadeUp>
     </section>
   )
 }
