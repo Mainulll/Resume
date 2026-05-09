@@ -380,7 +380,30 @@ function Hero() {
     </section>
   )
 }
-function Experience() { return <section id="experience" className="container section"><h2 className="section-title">Experience</h2></section> }
+function Experience() {
+  return (
+    <section id="experience" className="container section">
+      <FadeUp><h2 className="section-title">Experience</h2></FadeUp>
+      <div className="experience-list">
+        {data.experience.map((exp, i) => (
+          <FadeUp key={exp.company} delay={i * 0.05}>
+            <article className="card exp-card">
+              <header className="exp-head">
+                <h3>{exp.role}</h3>
+                <p className="exp-meta">
+                  {exp.company} · {exp.period} · {exp.location}
+                </p>
+              </header>
+              <ul className="bullets">
+                {exp.bullets.map((b) => <li key={b}>{b}</li>)}
+              </ul>
+            </article>
+          </FadeUp>
+        ))}
+      </div>
+    </section>
+  )
+}
 function Skills() { return <section id="skills" className="container section"><h2 className="section-title">Skills</h2></section> }
 function Projects() { return <section id="projects" className="container section"><h2 className="section-title">Projects</h2></section> }
 function Education() { return <section id="education" className="container section"><h2 className="section-title">Education</h2></section> }
