@@ -404,10 +404,86 @@ function Experience() {
     </section>
   )
 }
-function Skills() { return <section id="skills" className="container section"><h2 className="section-title">Skills</h2></section> }
-function Projects() { return <section id="projects" className="container section"><h2 className="section-title">Projects</h2></section> }
-function Education() { return <section id="education" className="container section"><h2 className="section-title">Education</h2></section> }
-function Leadership() { return <section id="leadership" className="container section"><h2 className="section-title">Leadership &amp; Impact</h2></section> }
+function Skills() {
+  return (
+    <section id="skills" className="container section">
+      <FadeUp><h2 className="section-title">Skills</h2></FadeUp>
+      <div className="pillars-grid">
+        {data.pillars.map((pillar, i) => (
+          <FadeUp key={pillar.title} delay={i * 0.05}>
+            <article className="card pillar-card">
+              <h3>{pillar.title}</h3>
+              <div className="pillar-tags">
+                {pillar.items.map((item) => <span key={item} className="tag">{item}</span>)}
+              </div>
+            </article>
+          </FadeUp>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Projects() {
+  return (
+    <section id="projects" className="container section">
+      <FadeUp><h2 className="section-title">Projects</h2></FadeUp>
+      <div className="project-list">
+        {data.projects.map((p, i) => (
+          <FadeUp key={p.name} delay={i * 0.05}>
+            <article className="card project-card">
+              <p className="project-role">{p.role}</p>
+              <h3>{p.name} <span className="muted" style={{ fontWeight: 500 }}>— {p.subtitle}</span></h3>
+              <p>{p.description}</p>
+              <p className="project-tech">{p.tech}</p>
+              {p.link && (
+                <a href={p.link} target="_blank" rel="noopener noreferrer">{p.linkLabel || 'View project'} →</a>
+              )}
+            </article>
+          </FadeUp>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function Education() {
+  return (
+    <section id="education" className="container section">
+      <FadeUp><h2 className="section-title">Education</h2></FadeUp>
+      <FadeUp delay={0.05}>
+        <article className="card edu-card">
+          <h3>{data.education.degree}</h3>
+          <p className="exp-meta">{data.education.institution} · {data.education.period}</p>
+          <p style={{ marginTop: '0.25rem' }}>Majors: {data.education.majors}</p>
+          <p className="edu-coursework">{data.education.coursework}</p>
+          <ul className="bullets">
+            {data.education.highlights.map((h) => <li key={h}>{h}</li>)}
+          </ul>
+        </article>
+      </FadeUp>
+    </section>
+  )
+}
+
+function Leadership() {
+  return (
+    <section id="leadership" className="container section">
+      <FadeUp><h2 className="section-title">Leadership &amp; Impact</h2></FadeUp>
+      <div className="leadership-list">
+        {data.leadership.map((item, i) => (
+          <FadeUp key={item.org} delay={i * 0.04}>
+            <article className="card leadership-card">
+              <h3>{item.title} · <span className="muted" style={{ fontWeight: 500 }}>{item.org}</span></h3>
+              <p className="exp-meta">{item.period}</p>
+              <p style={{ marginTop: '0.5rem' }}>{item.description}</p>
+            </article>
+          </FadeUp>
+        ))}
+      </div>
+    </section>
+  )
+}
 function Footer() {
   return (
     <footer id="contact" className="container footer">
