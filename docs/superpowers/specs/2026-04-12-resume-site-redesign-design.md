@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-12
 **Author:** Minul Lokuliyana + Claude
-**Status:** Approved
+**Status:** Superseded by `2026-05-09-recruiter-readable-redesign-design.md`
 
 ## Overview
 
