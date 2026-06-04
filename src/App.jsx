@@ -496,19 +496,28 @@ function toIdent(s) {
 function Projects() {
   return (
     <section id="projects" className="container section">
-      <FadeUp><SectionHeader num="03">Projects</SectionHeader></FadeUp>
+      <FadeUp><SectionHeader num="03">projects</SectionHeader></FadeUp>
       <div className="project-list">
         {data.projects.map((p, i) => (
           <FadeUp key={p.name} delay={i * 0.05}>
-            <article className="card project-card">
-              <p className="project-role">{p.role}</p>
-              <h3>
-                {p.name} <span className="project-subtitle">{p.subtitle}</span>
+            <article className="term-card project-card">
+              <div className="exp-meta">
+                <span className="exp-badge">{p.role}</span>
+              </div>
+              <h3 className="project-title">
+                {p.name} <span className="project-subtitle">— {p.subtitle}</span>
               </h3>
-              <p>{p.description}</p>
-              <p className="project-tech">{p.tech}</p>
+              <p className="project-desc">{p.description}</p>
+              <p className="project-tech mono">{p.tech.split('·').map((t, j, arr) => (
+                <span key={j}>
+                  {t.trim()}
+                  {j < arr.length - 1 && <span className="project-tech-dot"> · </span>}
+                </span>
+              ))}</p>
               {p.link && (
-                <a href={p.link} target="_blank" rel="noopener noreferrer">{p.linkLabel || 'View project'} →</a>
+                <a href={p.link} target="_blank" rel="noopener noreferrer" className="project-link mono">
+                  {p.linkLabel || 'view project'} <span aria-hidden="true">→</span>
+                </a>
               )}
             </article>
           </FadeUp>
@@ -521,15 +530,18 @@ function Projects() {
 function Education() {
   return (
     <section id="education" className="container section">
-      <FadeUp><SectionHeader num="04">Education</SectionHeader></FadeUp>
+      <FadeUp><SectionHeader num="04">education</SectionHeader></FadeUp>
       <FadeUp delay={0.05}>
-        <article className="card edu-card">
-          <h3>{data.education.degree}</h3>
-          <p className="exp-meta">{data.education.institution} · {data.education.period}</p>
-          <p style={{ marginTop: '0.25rem' }}>Majors: {data.education.majors}</p>
+        <article className="term-card edu-card">
+          <div className="exp-meta">
+            <span className="exp-badge">{data.education.period}</span>
+            <span className="exp-meta-item">{data.education.institution}</span>
+          </div>
+          <h3 className="exp-role">{data.education.degree}</h3>
+          <p className="edu-majors">Majors: <span className="edu-majors-value">{data.education.majors}</span></p>
           <p className="edu-coursework">{data.education.coursework}</p>
-          <ul className="bullets">
-            {data.education.highlights.map((h) => <li key={h}>{h}</li>)}
+          <ul className="exp-bullets">
+            {data.education.highlights.map((h, i) => <li key={i}>{h}</li>)}
           </ul>
         </article>
       </FadeUp>
@@ -540,16 +552,17 @@ function Education() {
 function Leadership() {
   return (
     <section id="leadership" className="container section">
-      <FadeUp><SectionHeader num="05">Leadership &amp; Impact</SectionHeader></FadeUp>
+      <FadeUp><SectionHeader num="05">leadership &amp; impact</SectionHeader></FadeUp>
       <div className="leadership-list">
         {data.leadership.map((item, i) => (
-          <FadeUp key={item.org} delay={i * 0.04}>
-            <article className="card leadership-card">
-              <h3>
-                {item.title} <span className="leadership-org">· {item.org}</span>
-              </h3>
-              <p className="exp-meta">{item.period}</p>
-              <p style={{ marginTop: '0.5rem' }}>{item.description}</p>
+          <FadeUp key={`${item.org}-${item.title}`} delay={i * 0.04}>
+            <article className="term-card leadership-card">
+              <div className="exp-meta">
+                <span className="exp-badge">{item.period}</span>
+                <span className="exp-meta-item">{item.org}</span>
+              </div>
+              <h3 className="exp-role">{item.title}</h3>
+              <p className="leadership-desc">{item.description}</p>
             </article>
           </FadeUp>
         ))}
