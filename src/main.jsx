@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import App from './App.jsx'
 import WritingIndex from './components/WritingIndex.jsx'
+import PostPage from './components/PostPage.jsx'
 import './index.css'
 
 createRoot(document.getElementById('root')).render(
@@ -11,6 +12,7 @@ createRoot(document.getElementById('root')).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/writing" element={<WritingIndex />} />
+        <Route path="/writing/:slug" element={<PostPage />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
