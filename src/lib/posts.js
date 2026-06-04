@@ -9,13 +9,19 @@ const modules = import.meta.glob('/src/content/posts/*.md', {
 const WORDS_PER_MINUTE = 220
 const FILENAME_RX = /\/(\d{4}-\d{2}-\d{2})-(.+)\.md$/
 
+function toDateString(v) {
+  if (!v) return null
+  if (v instanceof Date) return v.toISOString().slice(0, 10)
+  return String(v).slice(0, 10)
+}
+
 function parseEntry(path, raw) {
   const m = path.match(FILENAME_RX)
   if (!m) throw new Error(`Post filename must match YYYY-MM-DD-slug.md: ${path}`)
   const [, fileDate, slug] = m
 
   const { data, content } = matter(raw)
-  const date = data.date ? String(data.date).slice(0, 10) : fileDate
+  const date = toDateString(data.date) ?? fileDate
   const words = content.trim().split(/\s+/).filter(Boolean).length
   const readingMinutes = Math.max(1, Math.ceil(words / WORDS_PER_MINUTE))
 
