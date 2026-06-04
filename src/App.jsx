@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import BootSequence from './components/BootSequence.jsx'
+import CustomCursor from './components/CustomCursor.jsx'
 import { Link } from 'react-router-dom'
 import { latestPosts, allPosts } from './lib/posts.js'
 
@@ -72,20 +73,20 @@ const data = {
   ],
   pillars: [
     {
-      title: 'Project & Programme Management',
-      items: ['Programme delivery', 'Stakeholder engagement', 'Risk assessment', 'Cost-benefit analysis', 'Scenario planning', 'Cross-functional coordination', 'Lean Six Sigma', 'Agile', 'Procurement strategy'],
+      title: 'Project & Delivery',
+      items: ['Programme delivery', 'Stakeholder engagement', 'Risk assessment', 'Cross-functional coordination', 'Procurement strategy'],
     },
     {
       title: 'Data & Engineering',
-      items: ['Python', 'R', 'SQL', 'Excel / VBA', 'Power Query', 'Power Pivot', 'Power BI', 'Tableau', 'SAP ERP', 'Git', 'React', 'React Native', 'TypeScript', 'HTML / CSS', 'Supabase'],
+      items: ['Python', 'SQL', 'Power BI', 'Tableau', 'SAP ERP', 'React · TypeScript', 'Excel · VBA'],
     },
     {
       title: 'AI & Automation',
-      items: ['Prompt engineering', 'Agentic AI workflows', 'LLM integration', 'GPT-4o', 'Mistral', 'Gemini', 'Process automation', 'Data pipelines'],
+      items: ['LLM integration', 'Agentic workflows', 'Prompt engineering', 'Process automation', 'Data pipelines'],
     },
     {
-      title: 'Cloud, Tools & Certifications',
-      items: ['Azure', 'AWS', 'GCP', 'Docker', 'Kubernetes', 'Kali Linux', 'Burp Suite', 'Salesforce', 'Jira', 'Confluence', 'ServiceNow', 'CPP', 'Lean Six Sigma Yellow Belt'],
+      title: 'Cloud & Certifications',
+      items: ['AWS · Azure · GCP', 'Docker', 'Salesforce', 'CPP', 'Lean Six Sigma YB'],
     },
   ],
   projects: [
@@ -631,6 +632,7 @@ export default function App() {
   return (
     <>
       <BootSequence />
+      <CustomCursor />
       <a href="#top" className="skip-link">Skip to content</a>
       <Nav />
       <main>

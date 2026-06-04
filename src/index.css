@@ -450,12 +450,14 @@ p { color: var(--text); }
 .term-body {
   padding: 1.5rem 1.6rem 1.6rem;
   font-size: 0.88rem;
-  line-height: 1.75;
+  line-height: 1.85;
 }
-.term-line { display: flex; gap: 0.7rem; align-items: baseline; }
+.term-line { display: flex; gap: 0.85rem; align-items: baseline; }
 .term-cmd .term-prompt { color: var(--accent-strong); user-select: none; font-weight: 500; }
 .term-cmd .term-content { color: var(--text); }
 .term-out { padding-left: 1.4rem; color: var(--text-muted); }
+.term-cmd { margin-top: 0.7rem; }
+.term-cmd:first-child { margin-top: 0; }
 
 .term-name .term-content {
   font-family: 'Geist', sans-serif;
@@ -519,6 +521,9 @@ p { color: var(--text); }
   .term-tab { font-size: 0.58rem; padding: 0.12rem 0.4rem; }
   .term-body { padding: 1rem 1.05rem 1.15rem; font-size: 0.8rem; line-height: 1.65; }
   .term-line { gap: 0.5rem; }
+  .term-cmd { margin-top: 0.55rem; }
+  .term-cmd:first-child { margin-top: 0; }
+  .term-body { line-height: 1.75; }
   .term-out { padding-left: 0.95rem; }
   .term-bio .term-content { font-size: 0.9rem; line-height: 1.55; }
   .term-name .term-content { font-size: clamp(1.6rem, 8vw, 2.1rem); padding: 0.2rem 0 0.35rem; }
@@ -871,5 +876,41 @@ p { color: var(--text); }
   border-bottom: 1px solid var(--border);
   padding: 0.5rem 0.6rem;
   text-align: left;
+}
+
+/* ── Custom cursor ─────────────────────────────────────────────────── */
+.has-custom-cursor, .has-custom-cursor * { cursor: none !important; }
+.has-custom-cursor input, .has-custom-cursor textarea { cursor: text !important; }
+
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent-strong);
+  box-shadow: 0 0 14px var(--accent-strong), 0 0 32px rgba(56, 189, 248, 0.35);
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+  transition:
+    width 0.22s ease,
+    height 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+  mix-blend-mode: normal;
+}
+.cursor-dot[data-hovering] {
+  width: 34px; height: 34px;
+  background: rgba(125, 211, 252, 0.1);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 22px rgba(56, 189, 248, 0.45);
+}
+
+@media (pointer: coarse), (max-width: 760px) {
+  .cursor-dot { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-dot { display: none; }
 }
 .post-body th { color: var(--text); font-weight: 600; }
