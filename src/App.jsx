@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import BootSequence from './components/BootSequence.jsx'
+import { Link } from 'react-router-dom'
+import { latestPosts, allPosts } from './lib/posts.js'
 
 /* ── Resume Data ──────────────────────────────────────────────────── */
 const data = {
@@ -160,6 +162,7 @@ const NAV_LINKS = [
   { label: 'Projects', href: '#projects' },
   { label: 'Education', href: '#education' },
   { label: 'Leadership', href: '#leadership' },
+  { label: 'Writing', href: '#writing' },
 ]
 
 /* ── Theme hook ───────────────────────────────────────────────────── */
@@ -564,6 +567,46 @@ function Leadership() {
   )
 }
 
+/* ── Writing (homepage section) ───────────────────────────────────── */
+function Writing() {
+  const posts = latestPosts(3)
+  const hasMore = allPosts.length > 3
+
+  return (
+    <section id="writing" className="container section">
+      <FadeUp><SectionHeader num="06">writing</SectionHeader></FadeUp>
+      {posts.length === 0 ? (
+        <FadeUp delay={0.05}>
+          <p className="post-empty mono">
+            <span className="post-empty-prompt">$</span> ls ~/writing/ <span className="post-empty-arrow">→</span> (empty) — first post coming soon
+          </p>
+        </FadeUp>
+      ) : (
+        <>
+          <div className="post-list">
+            {posts.map((p, i) => (
+              <FadeUp key={p.slug} delay={i * 0.05}>
+                <Link to={`/writing/${p.slug}`} className="post-row">
+                  <span className="post-date mono">{p.displayDate}</span>
+                  <span className="post-title">{p.title}<span className="post-arrow" aria-hidden="true"> →</span></span>
+                  <span className="post-meta mono">~{p.readingMinutes} min</span>
+                </Link>
+              </FadeUp>
+            ))}
+          </div>
+          {hasMore && (
+            <FadeUp delay={0.2}>
+              <Link to="/writing" className="post-index-link mono">
+                <span className="post-index-prompt">$</span> ls ~/writing/ <span className="post-index-arrow">→</span> see all posts
+              </Link>
+            </FadeUp>
+          )}
+        </>
+      )}
+    </section>
+  )
+}
+
 function Footer() {
   return (
     <footer id="contact" className="container footer">
@@ -597,6 +640,7 @@ export default function App() {
         <Projects />
         <Education />
         <Leadership />
+        <Writing />
       </main>
       <Footer />
     </>
