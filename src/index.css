@@ -19,6 +19,7 @@
   --accent: #7dd3fc;
   --accent-strong: #38bdf8;
   --accent-soft: rgba(125, 211, 252, 0.08);
+  --accent-text: #060611;
   --accent-violet: #c4b5fd;
   --accent-green: #34d399;
   --accent-red: #f87171;
@@ -49,6 +50,7 @@
   --accent: #0284c7;
   --accent-strong: #0369a1;
   --accent-soft: rgba(2, 132, 199, 0.08);
+  --accent-text: #ffffff;
   --accent-violet: #7c3aed;
   --accent-green: #059669;
   --accent-red: #dc2626;
