@@ -574,15 +574,18 @@ function Leadership() {
 function Footer() {
   return (
     <footer id="contact" className="container footer">
-      <p className="footer-mark">{data.name}</p>
-      <p className="footer-tagline">Let's talk.</p>
-      <nav className="footer-links" aria-label="Contact">
-        <a href={`mailto:${data.contact.email}`}>Email</a>
-        <a href={`tel:${data.contact.mobile}`}>Mobile</a>
-        <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-        <a href={data.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+      <div className="footer-block">
+        <p className="footer-prompt mono"><span className="footer-p">$</span> echo "let's talk."</p>
+        <p className="footer-tagline">Let's talk.</p>
+      </div>
+      <nav className="footer-links mono" aria-label="Contact">
+        <a href={`mailto:${data.contact.email}`}>email</a>
+        <a href={`tel:${data.contact.mobile}`}>mobile</a>
+        <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a>
+        <a href={data.contact.github} target="_blank" rel="noopener noreferrer">github</a>
         <a href={data.contact.website} target="_blank" rel="noopener noreferrer">minul.vercel.app</a>
       </nav>
+      <p className="footer-mark mono">© {new Date().getFullYear()} {data.name}</p>
     </footer>
   )
 }
