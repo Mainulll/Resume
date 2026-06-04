@@ -210,12 +210,7 @@ function FadeUp({ children, delay = 0, as: Tag = 'div' }) {
 
 /* ── Brand mark ───────────────────────────────────────────────────── */
 function BrandMark() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M12 2 L22 12 L12 22 L2 12 Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
-      <path d="M12 7 L17 12 L12 17 L7 12 Z" fill="currentColor" opacity="0.9" />
-    </svg>
-  )
+  return <span className="brand-mark mono" aria-hidden="true">~$ minul</span>
 }
 
 /* ── Theme toggle icons ───────────────────────────────────────────── */
@@ -271,7 +266,6 @@ function Nav() {
       <div className="nav-inner">
         <a href="#top" className="nav-brand" onClick={(e) => onClick(e, '#top')}>
           <BrandMark />
-          <span>Minul Lokuliyana</span>
         </a>
         <nav className="nav-links" aria-label="Sections">
           {NAV_LINKS.map((l) => (
