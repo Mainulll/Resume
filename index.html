@@ -3,29 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="description" content="Project coordinator and Monash dual-degree candidate (Business Analytics & Cybersecurity). Cross-functional delivery, stakeholder alignment, and process improvement across six industries." />
+    <meta name="description" content="Customer Success at Aphex. Final-year Business Analytics & Cybersecurity at Monash. Project coordinator focused on cross-functional delivery." />
     <meta name="author" content="Minul Lokuliyana" />
-    <meta name="theme-color" content="#faf8f5" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#060611" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Minul Lokuliyana — Project & Programme Coordinator" />
-    <meta property="og:description" content="Project coordinator and Monash dual-degree candidate (Business Analytics & Cybersecurity). Cross-functional delivery across six industries." />
+    <meta property="og:title" content="Minul Lokuliyana — Customer Success @ Aphex" />
+    <meta property="og:description" content="Customer Success at Aphex, helping major contractors plan and deliver better. Final-year Business Analytics &amp; Cybersecurity at Monash." />
     <meta property="og:image" content="/og-image.png" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Minul Lokuliyana — Project & Programme Coordinator" />
-    <meta name="twitter:description" content="Project coordinator and Monash dual-degree candidate (Business Analytics & Cybersecurity). Cross-functional delivery across six industries." />
+    <meta name="twitter:title" content="Minul Lokuliyana — Customer Success @ Aphex" />
+    <meta name="twitter:description" content="Customer Success at Aphex, helping major contractors plan and deliver better. Final-year Business Analytics &amp; Cybersecurity at Monash." />
 
-    <!-- Fonts: Inter (body sans) + Fraunces (display serif) -->
+    <!-- Fonts: Geist (display & body) + JetBrains Mono (terminal) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" /></noscript>
 
     <link rel="dns-prefetch" href="https://linkedin.com" />
     <link rel="dns-prefetch" href="https://github.com" />
@@ -36,14 +35,16 @@
         try {
           var t = localStorage.getItem('theme');
           if (t !== 'light' && t !== 'dark') {
-            t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            t = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
           }
           document.documentElement.setAttribute('data-theme', t);
-        } catch (e) {}
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
       })();
     </script>
 
-    <title>Minul Lokuliyana — Business Analytics &amp; Cybersecurity · Monash</title>
+    <title>Minul Lokuliyana — Customer Success @ Aphex</title>
   </head>
   <body>
     <div id="root"></div>
