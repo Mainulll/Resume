@@ -73,8 +73,8 @@ const data = {
   ],
   pillars: [
     {
-      title: 'Project & Delivery',
-      items: ['Programme delivery', 'Stakeholder engagement', 'Risk assessment', 'Cross-functional coordination', 'Procurement strategy'],
+      title: 'Account Management & Delivery',
+      items: ['Account management', 'Client relationships', 'Stakeholder engagement', 'Programme delivery', 'Cross-functional coordination'],
     },
     {
       title: 'Data & Engineering',
@@ -94,7 +94,7 @@ const data = {
       name: 'Previa',
       subtitle: 'AI Financial Intelligence Platform',
       role: 'Co-Founder',
-      description: 'I co-founded and shipped this. An AI platform that reconciles receipts for small businesses at 90%+ accuracy. I owned product, engineering, and go-to-market end to end.',
+      description: 'AI platform that reconciles receipts for small businesses at 90%+ accuracy. Co-founded and shipped end to end — product, engineering, and go-to-market.',
       tech: 'React · TypeScript · Supabase · Python · LLMs',
       link: 'https://github.com/demigod97/Previa-2.0',
       linkLabel: 'View on GitHub',
@@ -103,7 +103,7 @@ const data = {
       name: 'GymBro',
       subtitle: 'AI-Powered Fitness App',
       role: 'Solo Developer',
-      description: "Solo build. Offline-first mobile fitness app on React Native and Expo. Most of the implementation came from agentic AI under my direction. The workflow itself is the project.",
+      description: "Offline-first mobile fitness app, solo build on React Native and Expo. Most of the implementation came from agentic AI under my direction — the workflow itself is the project.",
       tech: 'React Native · Expo · TypeScript · SQLite · Zustand · Firebase',
       link: 'https://github.com/Mainulll/Gymbro-App',
       linkLabel: 'View on GitHub',
@@ -126,7 +126,7 @@ const data = {
     coursework: 'Coursework: machine learning, econometrics, statistical modelling, data visualisation, database systems, risk management.',
     highlights: [
       'Innovation for Impact Award (2024). University-wide AI design award judged on commercial viability, technical rigour, and societal impact.',
-      'Global Immersion (Fiji) and Innovation Guarantee (Microsoft). Led two cross-cultural consulting engagements: UN SDG-aligned project delivery and AI-driven stakeholder experience prototypes.',
+      'Global Immersion (Fiji) and Innovation Guarantee (Microsoft). Cross-cultural consulting engagements on UN SDG project delivery and AI stakeholder prototypes.',
     ],
   },
   leadership: [
@@ -134,7 +134,7 @@ const data = {
       title: 'Programme Coordinator',
       org: 'Preflight STEM Initiative',
       period: '2024 – Present',
-      description: "Founder, purely self-funded. Preflight partners with local institutions in Sri Lanka to get school and educational supplies to children who don't otherwise have access. I run the volunteer team and own programme delivery end to end.",
+      description: "Self-funded founder. We partner with institutions in Sri Lanka to deliver educational supplies to children without access. I run the volunteer team and own programme delivery end to end.",
     },
     {
       title: 'Officer',
@@ -379,7 +379,7 @@ function Hero() {
 
           <HeroLine delay={baseDelay + 0.85} prompt>cat ~/about.md</HeroLine>
           <HeroLine delay={baseDelay + 1.10} kind="bio">
-            I work in <em>customer success</em> at <em>Aphex</em>, helping major contractors plan and deliver better. I keep cross-functional teams aligned and ship high-value work on time. Strong on communication, organisation, and stakeholder management — with a soft spot for the unglamorous process improvements that quietly compound. Finishing <em>Business Analytics &amp; Cybersecurity</em> at Monash.
+            I'm a <em>people-focused</em> problem solver who turns complex technical ideas into clear, digestible information. I build <em>longstanding</em> business relationships that deliver real outcomes for everyone involved — calm under ambiguity, reliable over the line, with a soft spot for the unglamorous process improvements that quietly compound.
           </HeroLine>
 
           <HeroLine delay={baseDelay + 1.60} prompt>ls ~/links/</HeroLine>
