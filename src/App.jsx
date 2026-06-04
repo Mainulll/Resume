@@ -373,27 +373,20 @@ function Hero() {
           <HeroLine delay={baseDelay + 0.30} prompt>whoami</HeroLine>
           <HeroLine delay={baseDelay + 0.55} kind="name">{data.name}</HeroLine>
 
-          <HeroLine delay={baseDelay + 0.85} prompt>cat ~/role.txt</HeroLine>
-          <HeroLine delay={baseDelay + 1.10} kind="role">
-            Customer Success <span className="hero-at">@</span> Aphex
-            <span className="hero-sep">·</span>
-            Final-year student at Monash
-          </HeroLine>
-
-          <HeroLine delay={baseDelay + 1.45} prompt>cat ~/about.md</HeroLine>
-          <HeroLine delay={baseDelay + 1.70} kind="bio">
+          <HeroLine delay={baseDelay + 0.85} prompt>cat ~/about.md</HeroLine>
+          <HeroLine delay={baseDelay + 1.10} kind="bio">
             I work in <em>customer success</em> at <em>Aphex</em>, helping major contractors plan and deliver better. I keep cross-functional teams aligned and ship high-value work on time. Strong on communication, organisation, and stakeholder management — with a soft spot for the unglamorous process improvements that quietly compound. Finishing <em>Business Analytics &amp; Cybersecurity</em> at Monash.
           </HeroLine>
 
-          <HeroLine delay={baseDelay + 2.20} prompt>ls ~/links/</HeroLine>
-          <HeroLine delay={baseDelay + 2.45} kind="links">
+          <HeroLine delay={baseDelay + 1.60} prompt>ls ~/links/</HeroLine>
+          <HeroLine delay={baseDelay + 1.85} kind="links">
             <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a>
             <a href={data.contact.github} target="_blank" rel="noopener noreferrer">github</a>
             <a href={`mailto:${data.contact.email}`}>email</a>
             <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf">resume.pdf</a>
           </HeroLine>
 
-          <HeroLine delay={baseDelay + 2.85} prompt cursor />
+          <HeroLine delay={baseDelay + 2.25} prompt cursor />
         </div>
       </motion.div>
 
@@ -401,7 +394,7 @@ function Hero() {
         className="hero-cta-row"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: baseDelay + 3.0, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.45, delay: baseDelay + 2.4, ease: [0.22, 1, 0.36, 1] }}
       >
         <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
           Download resume
