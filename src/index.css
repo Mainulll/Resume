@@ -763,3 +763,17 @@ p { color: var(--text); }
   .post-row .post-title { font-size: 0.92rem; }
 }
 
+/* ── Page shell (writing index, post page) ─────────────────────────── */
+.page-shell { padding: 4rem 0 5rem; }
+.page-breadcrumb { font-size: 0.78rem; color: var(--text-muted); }
+.page-breadcrumb a { color: var(--accent); text-decoration: none; transition: color 0.2s ease; }
+.page-breadcrumb a:hover { color: var(--accent-violet); }
+.page-bc-current { color: var(--text); }
+.page-back { font-size: 0.78rem; }
+.page-back a { color: var(--text-muted); text-decoration: none; transition: color 0.2s ease; }
+.page-back a:hover { color: var(--accent); }
+.page-back a .footer-p { color: var(--accent-strong); margin-right: 0.4rem; }
+
+@media (max-width: 640px) {
+  .page-shell { padding: 2rem 0 3rem; }
+}
