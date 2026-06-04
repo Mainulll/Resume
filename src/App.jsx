@@ -7,8 +7,7 @@ const data = {
   name: 'Minul Lokuliyana',
   resumePdf: '/MinulLokuliyana_Resume.pdf',
   location: 'Melbourne, Australia',
-  role: 'Business Analytics & Cybersecurity · Monash University',
-  openTo: 'Looking for graduate roles from November 2026. Project management, analytics, strategy.',
+  role: 'Customer Success @ Aphex · Final-year student at Monash',
   contact: {
     email: 'minullokuliyana@hotmail.com',
     mobile: '+61 402 528 040',
@@ -209,35 +208,6 @@ function FadeUp({ children, delay = 0, as: Tag = 'div' }) {
   )
 }
 
-/* ── Name reveal (Apple-style character cascade) ──────────────────── */
-function NameReveal({ name, startDelay = 0.18 }) {
-  const reduce = useReducedMotion()
-  if (reduce) return <h1>{name}</h1>
-
-  const chars = Array.from(name)
-  return (
-    <h1 aria-label={name} className="hero-name">
-      <span aria-hidden="true">
-        {chars.map((c, i) => (
-          <motion.span
-            key={`${c}-${i}`}
-            className="hero-name-char"
-            initial={{ opacity: 0, y: 10, filter: 'blur(7px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            transition={{
-              duration: 0.55,
-              delay: startDelay + i * 0.035,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          >
-            {c === ' ' ? ' ' : c}
-          </motion.span>
-        ))}
-      </span>
-    </h1>
-  )
-}
-
 /* ── Brand mark ───────────────────────────────────────────────────── */
 function BrandMark() {
   return (
@@ -377,64 +347,92 @@ function Nav() {
 
 /* ── Hero ─────────────────────────────────────────────────────────── */
 function Hero() {
-  const [contactOpen, setContactOpen] = useState(false)
-  const wrapRef = useRef(null)
-
-  useEffect(() => {
-    if (!contactOpen) return
-    const onDown = (e) => { if (!wrapRef.current?.contains(e.target)) setContactOpen(false) }
-    document.addEventListener('pointerdown', onDown)
-    return () => document.removeEventListener('pointerdown', onDown)
-  }, [contactOpen])
+  const reduce = useReducedMotion()
+  const baseDelay = reduce ? 0 : 1.35 // start after boot overlay clears
 
   return (
     <section id="top" className="container hero">
-      <motion.p
-        className="eyebrow hero-eyebrow"
-        initial={{ opacity: 0, y: 6 }}
+      <motion.div
+        className="hero-eyebrow mono"
+        initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.4, delay: baseDelay, ease: [0.22, 1, 0.36, 1] }}
       >
-        {data.location}
-      </motion.p>
-
-      <NameReveal name={data.name} startDelay={0.18} />
+        <span className="hero-pulse" aria-hidden="true" />
+        {data.location} · v2026.1
+      </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        className="term-window hero-term"
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.95, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, delay: baseDelay + 0.1, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p className="hero-rolepill">{data.role}</p>
-        <p className="chip hero-chip"><span className="chip-dot" aria-hidden="true" />{data.openTo}</p>
-        <p className="hero-pitch">
-          I'm a project coordinator. I keep cross-functional teams aligned and ship high-value projects on time. Communication, organisation, and stakeholder management are where I'm strongest, and I have a soft spot for the unglamorous process improvements that quietly compound. <em>Currently</em> finishing my Business Analytics and Cybersecurity degrees at Monash.
-        </p>
-        <div className="hero-cta-row" ref={wrapRef}>
-          <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
-            Download Resume
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-              <path d="M7 1v8M4 6l3 3 3-3M2 12h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-          {!contactOpen ? (
-            <button type="button" className="btn btn-secondary" onClick={() => setContactOpen(true)}>
-              Get in touch
-            </button>
-          ) : (
-            <>
-              <a href={`tel:${data.contact.mobile}`} className="btn btn-secondary">Mobile</a>
-              <a href={`mailto:${data.contact.email}`} className="btn btn-secondary">Email</a>
-            </>
-          )}
+        <div className="term-titlebar">
+          <div className="term-dots"><span /><span /><span /></div>
+          <div className="term-title mono">minul@portfolio — zsh — 86×24</div>
+          <div className="term-tab mono">~ /</div>
         </div>
-        <nav className="hero-links" aria-label="Profiles">
-          <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-          <a href={data.contact.github} target="_blank" rel="noopener noreferrer">GitHub</a>
-          <a href={`mailto:${data.contact.email}`}>Email</a>
-        </nav>
+        <div className="term-body mono">
+          <HeroLine delay={baseDelay + 0.30} prompt>whoami</HeroLine>
+          <HeroLine delay={baseDelay + 0.55} kind="name">{data.name}</HeroLine>
+
+          <HeroLine delay={baseDelay + 0.85} prompt>cat ~/role.txt</HeroLine>
+          <HeroLine delay={baseDelay + 1.10} kind="role">
+            Customer Success <span className="hero-at">@</span> Aphex
+            <span className="hero-sep">·</span>
+            Final-year student at Monash
+          </HeroLine>
+
+          <HeroLine delay={baseDelay + 1.45} prompt>cat ~/about.md</HeroLine>
+          <HeroLine delay={baseDelay + 1.70} kind="bio">
+            I work in <em>customer success</em> at <em>Aphex</em>, helping major contractors plan and deliver better. I keep cross-functional teams aligned and ship high-value work on time. Strong on communication, organisation, and stakeholder management — with a soft spot for the unglamorous process improvements that quietly compound. Finishing <em>Business Analytics &amp; Cybersecurity</em> at Monash.
+          </HeroLine>
+
+          <HeroLine delay={baseDelay + 2.20} prompt>ls ~/links/</HeroLine>
+          <HeroLine delay={baseDelay + 2.45} kind="links">
+            <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a>
+            <a href={data.contact.github} target="_blank" rel="noopener noreferrer">github</a>
+            <a href={`mailto:${data.contact.email}`}>email</a>
+            <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf">resume.pdf</a>
+          </HeroLine>
+
+          <HeroLine delay={baseDelay + 2.85} prompt cursor />
+        </div>
+      </motion.div>
+
+      <motion.div
+        className="hero-cta-row"
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, delay: baseDelay + 3.0, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
+          Download resume
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+            <path d="M7 1v8M4 6l3 3 3-3M2 12h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </a>
+        <a href={`mailto:${data.contact.email}`} className="btn btn-secondary">Get in touch</a>
       </motion.div>
     </section>
+  )
+}
+
+function HeroLine({ children, delay, prompt = false, cursor = false, kind }) {
+  const reduce = useReducedMotion()
+  const className = `term-line${kind ? ` term-${kind}` : ''}${prompt ? ' term-cmd' : ' term-out'}`
+  return (
+    <motion.div
+      className={className}
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25, delay, ease: 'easeOut' }}
+    >
+      {prompt && <span className="term-prompt">$</span>}
+      <span className="term-content">{children}</span>
+      {cursor && <span className="term-cursor" />}
+    </motion.div>
   )
 }
 
