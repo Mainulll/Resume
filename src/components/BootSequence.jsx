@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 
 const LINES = [
@@ -11,19 +11,39 @@ const LINES = [
   { kind: 'done', text: 'open hero' },
 ]
 
+const BOOT_MS = 1350
+
 export default function BootSequence() {
   const reduce = useReducedMotion()
-  const [visible, setVisible] = useState(true)
+  const [visible, setVisible] = useState(() => !reduce)
+  const overlayRef = useRef(null)
 
+  // Auto-dismiss after BOOT_MS (and re-sync if reduce flips on mid-session)
   useEffect(() => {
     if (reduce) {
       setVisible(false)
       return
     }
-    const total = 1350 // ms — matches last animation-delay + buffer
-    const t = setTimeout(() => setVisible(false), total)
+    const t = setTimeout(() => setVisible(false), BOOT_MS)
     return () => clearTimeout(t)
   }, [reduce])
+
+  // While visible, make siblings inert so keyboard + AT can't reach them
+  useEffect(() => {
+    if (!visible || !overlayRef.current) return
+    const parent = overlayRef.current.parentElement
+    if (!parent) return
+    const inerted = []
+    for (const child of parent.children) {
+      if (child !== overlayRef.current && !child.hasAttribute('inert')) {
+        child.setAttribute('inert', '')
+        inerted.push(child)
+      }
+    }
+    return () => {
+      for (const el of inerted) el.removeAttribute('inert')
+    }
+  }, [visible])
 
   if (reduce) return null
 
@@ -31,8 +51,11 @@ export default function BootSequence() {
     <AnimatePresence>
       {visible && (
         <motion.div
+          ref={overlayRef}
           className="boot-overlay"
-          aria-hidden="true"
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="Loading portfolio"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
