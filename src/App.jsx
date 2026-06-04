@@ -462,14 +462,20 @@ function Experience() {
 function Skills() {
   return (
     <section id="skills" className="container section">
-      <FadeUp><SectionHeader num="02">Skills</SectionHeader></FadeUp>
+      <FadeUp><SectionHeader num="02">skills</SectionHeader></FadeUp>
       <div className="pillars-grid">
         {data.pillars.map((pillar, i) => (
           <FadeUp key={pillar.title} delay={i * 0.05}>
-            <article className="card pillar-card">
-              <h3>{pillar.title}</h3>
+            <article className="term-card pillar-card">
+              <div className="pillar-decl mono">
+                <span className="pillar-keyword">const</span>{' '}
+                <span className="pillar-name">{toIdent(pillar.title)}</span>{' '}
+                <span className="pillar-eq">=</span>
+              </div>
               <div className="pillar-tags">
-                {pillar.items.map((item) => <span key={item} className="tag">{item}</span>)}
+                {pillar.items.map((item) => (
+                  <span key={item} className="pillar-chip">{item}</span>
+                ))}
               </div>
             </article>
           </FadeUp>
@@ -477,6 +483,14 @@ function Skills() {
       </div>
     </section>
   )
+}
+
+function toIdent(s) {
+  return s
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
 }
 
 function Projects() {
