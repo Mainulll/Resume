@@ -230,12 +230,14 @@ function MoonIcon() {
   )
 }
 
-/* ── Section header (numbered eyebrow + title) ────────────────────── */
+/* ── Section header (hash-prefixed terminal title) ────────────────── */
 function SectionHeader({ num, children }) {
   return (
     <header className="section-header">
-      <p className="section-num">{num}</p>
-      <h2>{children}</h2>
+      <span className="section-hash mono">#</span>
+      <span className="section-num mono">{num} /</span>
+      <h2 className="section-title">{children}</h2>
+      <span className="section-fill-line" aria-hidden="true" />
     </header>
   )
 }
