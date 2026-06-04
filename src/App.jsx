@@ -436,19 +436,20 @@ function HeroLine({ children, delay, prompt = false, cursor = false, kind }) {
 function Experience() {
   return (
     <section id="experience" className="container section">
-      <FadeUp><SectionHeader num="01">Experience</SectionHeader></FadeUp>
+      <FadeUp><SectionHeader num="01">experience</SectionHeader></FadeUp>
       <div className="experience-list">
         {data.experience.map((exp, i) => (
-          <FadeUp key={exp.company} delay={i * 0.05}>
-            <article className="card exp-card">
-              <header className="exp-head">
-                <h3>{exp.role}</h3>
-                <p className="exp-meta">
-                  {exp.company} · {exp.period} · {exp.location}
-                </p>
-              </header>
-              <ul className="bullets">
-                {exp.bullets.map((b) => <li key={b}>{b}</li>)}
+          <FadeUp key={`${exp.company}-${exp.period}`} delay={i * 0.05}>
+            <article className="term-card exp-card">
+              <div className="exp-meta">
+                <span className="exp-badge">{exp.period}</span>
+                <span className="exp-meta-item">{exp.location}</span>
+              </div>
+              <h3 className="exp-role">
+                {exp.role} <span className="exp-at">@ {exp.company}</span>
+              </h3>
+              <ul className="exp-bullets">
+                {exp.bullets.map((b, j) => <li key={j}>{b}</li>)}
               </ul>
             </article>
           </FadeUp>
