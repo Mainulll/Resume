@@ -469,14 +469,6 @@ p { color: var(--text); }
   -webkit-text-fill-color: transparent;
   padding: 0.35rem 0 0.55rem;
 }
-.term-role .term-content {
-  font-family: 'Geist', sans-serif;
-  font-size: 1.05rem;
-  font-weight: 500;
-  color: var(--text);
-}
-.hero-at { color: var(--accent); margin: 0 0.1rem; }
-.hero-sep { color: var(--text-muted); margin: 0 0.55rem; }
 
 .term-bio .term-content {
   font-family: 'Geist', sans-serif;
