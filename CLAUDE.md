@@ -3,7 +3,8 @@
 ## Tech
 - Vite 6 + React 18
 - framer-motion for UI animation
-- @react-three/fiber + @react-three/drei + three for the 3D background scene
+- Custom CSS tokens (electric / terminal palette, Geist + JetBrains Mono)
+- No 3D scene (legacy reference removed)
 
 ## Commands
 - Install: npm install
@@ -14,14 +15,14 @@
 ## Repo layout (expected)
 - index.html (loads /src/main.jsx)
 - src/main.jsx (React root)
-- src/App.jsx (main app)
-- src/Scene3D.jsx (3D background components)
-- src/index.css (global styles)
+- src/App.jsx (main app — Nav, Hero, sections, Footer)
+- src/components/BootSequence.jsx (boot-overlay loading animation)
+- src/index.css (global styles + tokens)
 
 ## Code style rules
 - Keep components functional (hooks), minimal and readable.
 - Avoid breaking visual polish: prefer small, incremental edits.
-- Preserve performance: 3D scene must remain lightweight and aria-hidden.
+- Preserve performance: animations must remain smooth; avoid layout shifts.
 - Prefer AU English spelling in copy.
 
 ## Definition of done
