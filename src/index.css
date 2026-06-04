@@ -451,3 +451,64 @@ a.linked:hover, .hero-links a:hover, .footer-links a:hover, .project-card a:hove
     transition-duration: 0ms !important;
   }
 }
+
+/* ── Boot sequence overlay ─────────────────────────────────────────── */
+.boot-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  background-image: var(--bg-overlay-sky), var(--bg-overlay-violet);
+  z-index: 10000;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1.5rem;
+}
+.boot-window {
+  width: 100%; max-width: 580px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg), var(--glow-sky);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+.boot-titlebar {
+  display: flex; align-items: center;
+  padding: 0.55rem 0.9rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+  border-bottom: 1px solid var(--border);
+}
+.boot-dots { display: flex; gap: 6px; }
+.boot-dots span { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
+.boot-dots span:nth-child(1) { background: #ff5f57; }
+.boot-dots span:nth-child(2) { background: #febc2e; }
+.boot-dots span:nth-child(3) { background: #28c840; }
+.boot-title { flex: 1; text-align: center; font-size: 0.72rem; color: var(--text-muted); letter-spacing: 0.04em; }
+.boot-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: #c3c5dc;
+}
+.boot-line {
+  display: flex; gap: 0.6rem;
+  opacity: 0;
+  animation: boot-line-in 0.25s ease forwards;
+}
+.boot-line .boot-prompt { color: var(--accent-strong); user-select: none; font-weight: 500; }
+.boot-line .boot-ok { color: var(--accent-green); font-weight: 500; }
+.boot-line .boot-text { color: #c3c5dc; }
+.boot-line.boot-done { margin-top: 0.4rem; }
+.boot-line.boot-done .boot-text { color: var(--accent-strong); font-weight: 500; }
+.boot-cursor {
+  display: inline-block;
+  width: 8px; height: 1.05em;
+  background: var(--accent-strong);
+  vertical-align: -2px;
+  margin-left: 3px;
+  animation: boot-blink 1.05s steps(2) infinite;
+}
+@keyframes boot-line-in { to { opacity: 1; } }
+@keyframes boot-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-overlay { display: none !important; }
+}

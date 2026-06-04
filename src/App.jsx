@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import BootSequence from './components/BootSequence.jsx'
 
 /* ── Resume Data ──────────────────────────────────────────────────── */
 const data = {
@@ -568,6 +569,7 @@ function Footer() {
 export default function App() {
   return (
     <>
+      <BootSequence />
       <a href="#top" className="skip-link">Skip to content</a>
       <Nav />
       <main>
