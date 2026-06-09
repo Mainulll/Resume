@@ -132,7 +132,7 @@ const data = {
   leadership: [
     {
       title: 'Programme Coordinator',
-      org: 'Preflight STEM Initiative',
+      org: 'Preflight',
       period: '2024 – Present',
       description: "Self-funded founder. We partner with institutions in Sri Lanka to deliver educational supplies to children without access. I run the volunteer team and own programme delivery end to end.",
     },
