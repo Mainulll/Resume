@@ -178,19 +178,7 @@ function useTheme() {
     localStorage.setItem('theme', theme)
   }, [theme])
 
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = (e) => {
-      if (!localStorage.getItem('theme-override')) {
-        setTheme(e.matches ? 'dark' : 'light')
-      }
-    }
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  }, [])
-
   const toggle = () => {
-    localStorage.setItem('theme-override', '1')
     setTheme((t) => (t === 'dark' ? 'light' : 'dark'))
   }
 
