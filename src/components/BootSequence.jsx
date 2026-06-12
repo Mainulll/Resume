@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
+import { shouldPlayBoot, markBootPlayed } from '../lib/boot.js'
 
 const LINES = [
   { kind: 'cmd', text: './portfolio.sh --theme=electric' },
   { kind: 'ok', text: 'mounting /minul/portfolio' },
   { kind: 'ok', text: 'loading config.json' },
   { kind: 'ok', text: 'initialising theme → electric' },
-  { kind: 'ok', text: 'hydrating sections (5 found)' },
+  { kind: 'ok', text: 'hydrating sections (6 found)' },
   { kind: 'ok', text: 'ready in 0.8s' },
   { kind: 'done', text: 'open hero' },
 ]
@@ -15,18 +16,22 @@ const BOOT_MS = 1350
 
 export default function BootSequence() {
   const reduce = useReducedMotion()
-  const [visible, setVisible] = useState(() => !reduce)
+  const [visible, setVisible] = useState(() => !reduce && shouldPlayBoot())
   const overlayRef = useRef(null)
 
   // Auto-dismiss after BOOT_MS (and re-sync if reduce flips on mid-session)
   useEffect(() => {
+    if (!visible) return
     if (reduce) {
       setVisible(false)
       return
     }
-    const t = setTimeout(() => setVisible(false), BOOT_MS)
+    const t = setTimeout(() => {
+      markBootPlayed()
+      setVisible(false)
+    }, BOOT_MS)
     return () => clearTimeout(t)
-  }, [reduce])
+  }, [reduce, visible])
 
   // While visible, make siblings inert so keyboard + AT can't reach them
   useEffect(() => {

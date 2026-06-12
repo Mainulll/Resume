@@ -3,8 +3,19 @@ import { Link, useParams, Navigate } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
+import javascript from 'highlight.js/lib/languages/javascript'
+import typescript from 'highlight.js/lib/languages/typescript'
+import bash from 'highlight.js/lib/languages/bash'
+import python from 'highlight.js/lib/languages/python'
+import json from 'highlight.js/lib/languages/json'
 import { getPost } from '../lib/posts.js'
 import 'highlight.js/styles/github-dark-dimmed.css'
+
+// Register only the languages posts actually use, so highlighting is
+// deterministic. Note: rehype-highlight statically imports lowlight's
+// `common` set either way, so this doesn't shrink the chunk itself. The
+// bundle win comes from this whole route being lazy-loaded (see main.jsx).
+const HLJS_LANGUAGES = { javascript, typescript, bash, python, json }
 
 export default function PostPage() {
   const { slug } = useParams()
@@ -38,7 +49,7 @@ export default function PostPage() {
         <div className="post-body">
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
-            rehypePlugins={[rehypeHighlight]}
+            rehypePlugins={[[rehypeHighlight, { languages: HLJS_LANGUAGES }]]}
           >
             {post.content}
           </ReactMarkdown>

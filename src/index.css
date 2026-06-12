@@ -15,6 +15,8 @@
   --text: #f5f6fb;
   --text-muted: #8b8da5;
   --text-dim: #5a5d75;
+  --text-body: #cbcde2;
+  --text-body-strong: #d9dbef;
 
   --accent: #7dd3fc;
   --accent-strong: #38bdf8;
@@ -45,6 +47,8 @@
   --text: #0a0a0a;
   --text-muted: #52525b;
   --text-dim: #a1a1aa;
+  --text-body: #3f3f46;
+  --text-body-strong: #27272a;
 
   --accent: #0284c7;
   --accent-strong: #0369a1;
@@ -297,7 +301,7 @@ p { color: var(--text); }
 }
 .footer-links a {
   color: var(--text-muted);
-  border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+  border-bottom: 1px dashed var(--border-strong);
   padding-bottom: 1px;
   transition: color 0.2s, border-color 0.2s;
 }
@@ -366,7 +370,7 @@ p { color: var(--text); }
   padding: 1.25rem 1.5rem 1.5rem;
   font-size: 0.84rem;
   line-height: 1.7;
-  color: #c3c5dc;
+  color: var(--text-body);
 }
 .boot-line {
   display: flex; gap: 0.6rem;
@@ -375,7 +379,7 @@ p { color: var(--text); }
 }
 .boot-line .boot-prompt { color: var(--accent-strong); user-select: none; font-weight: 500; }
 .boot-line .boot-ok { color: var(--accent-green); font-weight: 500; }
-.boot-line .boot-text { color: #c3c5dc; }
+.boot-line .boot-text { color: var(--text-body); }
 .boot-line.boot-done { margin-top: 0.4rem; }
 .boot-line.boot-done .boot-text { color: var(--accent-strong); font-weight: 500; }
 .boot-cursor {
@@ -471,12 +475,26 @@ p { color: var(--text); }
   -webkit-text-fill-color: transparent;
   padding: 0.35rem 0 0.55rem;
 }
+:root[data-theme='light'] .term-name .term-content {
+  background: linear-gradient(180deg, #0a0a0a 0%, #3b4663 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.term-role .term-content {
+  font-family: 'Geist', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text);
+}
+.hero-at { color: var(--accent); margin: 0 0.1rem; }
+.hero-sep { color: var(--text-muted); margin: 0 0.55rem; }
 
 .term-bio .term-content {
   font-family: 'Geist', sans-serif;
   font-size: 1rem;
   font-weight: 400;
-  color: #d9dbef;
+  color: var(--text-body-strong);
   line-height: 1.6;
   max-width: 60ch;
 }
@@ -526,6 +544,7 @@ p { color: var(--text); }
   .term-body { line-height: 1.75; }
   .term-out { padding-left: 0.95rem; }
   .term-bio .term-content { font-size: 0.9rem; line-height: 1.55; }
+  .term-role .term-content { font-size: 0.92rem; }
   .term-name .term-content { font-size: clamp(1.6rem, 8vw, 2.1rem); padding: 0.2rem 0 0.35rem; }
   .term-links .term-content { gap: 0.7rem; }
   .hero-cta-row { margin-top: 1rem; gap: 0.5rem; }
@@ -587,7 +606,7 @@ p { color: var(--text); }
   position: relative;
   padding-left: 1.1rem;
   margin-bottom: 0.45rem;
-  color: #cbcde2;
+  color: var(--text-body);
   font-size: 0.95rem;
   line-height: 1.55;
 }
@@ -632,7 +651,7 @@ p { color: var(--text); }
   background: var(--accent-soft);
   border: 1px solid rgba(125, 211, 252, 0.18);
   border-radius: 6px;
-  color: #cfd2ec;
+  color: var(--text-body);
   transition: all 0.2s ease;
 }
 .pillar-chip:hover {
@@ -658,7 +677,7 @@ p { color: var(--text); }
 }
 .project-subtitle { color: var(--text-muted); font-weight: 400; }
 .project-desc {
-  color: #cbcde2;
+  color: var(--text-body);
   font-size: 0.95rem;
   line-height: 1.55;
   margin: 0;
@@ -692,7 +711,7 @@ p { color: var(--text); }
 }
 .edu-majors-value { color: var(--accent); }
 .edu-coursework {
-  color: #cbcde2;
+  color: var(--text-body);
   font-size: 0.92rem;
   line-height: 1.5;
   margin: 0.25rem 0 0.5rem;
@@ -702,7 +721,7 @@ p { color: var(--text); }
 .leadership-list { display: flex; flex-direction: column; gap: 0.75rem; }
 .leadership-card { display: flex; flex-direction: column; gap: 0.4rem; }
 .leadership-desc {
-  color: #cbcde2;
+  color: var(--text-body);
   font-size: 0.92rem;
   line-height: 1.55;
   margin: 0;
@@ -795,7 +814,7 @@ p { color: var(--text); }
 .post-meta-sep { opacity: 0.5; }
 .post-tags { color: var(--accent); }
 
-.post-body { color: #d9dbef; font-size: 1rem; line-height: 1.7; }
+.post-body { color: var(--text-body-strong); font-size: 1rem; line-height: 1.7; }
 .post-body p { margin: 0 0 1rem; }
 .post-body h2 {
   font-family: 'Geist', sans-serif;
@@ -823,7 +842,7 @@ p { color: var(--text); }
 .post-body ol { list-style: decimal; color: var(--text-muted); }
 .post-body ol li { color: var(--text-muted); margin-bottom: 0.4rem; }
 .post-body ol li::marker { color: var(--accent); }
-.post-body ol li > * { color: #d9dbef; }
+.post-body ol li > * { color: var(--text-body-strong); }
 .post-body blockquote {
   border-left: 2px solid var(--accent);
   padding: 0.2rem 0 0.2rem 1rem;

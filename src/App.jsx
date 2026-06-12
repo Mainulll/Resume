@@ -4,6 +4,7 @@ import BootSequence from './components/BootSequence.jsx'
 import CustomCursor from './components/CustomCursor.jsx'
 import { Link } from 'react-router-dom'
 import { latestPosts, allPosts } from './lib/posts.js'
+import { shouldPlayBoot } from './lib/boot.js'
 
 /* ── Resume Data ──────────────────────────────────────────────────── */
 const data = {
@@ -20,15 +21,26 @@ const data = {
   },
   experience: [
     {
-      role: 'Supply Chain Planner',
-      company: 'BSH Home Appliances Australia',
-      period: 'Jan 2026 – Present',
+      role: 'Customer Success Associate',
+      company: 'Aphex',
+      period: 'Jun 2026 – Present',
       location: 'Melbourne, VIC',
       bullets: [
-        'Coordinate national inventory across AU/NZ for Bosch, Siemens, Neff, and Gaggenau in SAP. Stock transfers, allocations, project reservations, and 3PL coordination, working closely with procurement, sales, and external partners to keep everything on track.',
+        'Support project deployments for major contractors including CPB Contractors, John Holland, and Acciona, on projects ranging from $50 million to multi-billion dollar programmes. Kickoffs, workspace setup, and training delivery teams.',
+        'Help site teams stand up weekly planning routines, then grow them into daily coordination. That shift is where Aphex stops being a planning tool and becomes how the whole project communicates.',
+        'Build relationships with the Engineers, Supervisors, and Project Managers who champion better planning, and track adoption and project health to spot where teams can get more from the platform.',
+      ],
+    },
+    {
+      role: 'Supply Chain Planner',
+      company: 'BSH Home Appliances Australia',
+      period: 'Jan 2026 – Jun 2026',
+      location: 'Melbourne, VIC',
+      bullets: [
+        'Coordinated national inventory across AU/NZ for Bosch, Siemens, Neff, and Gaggenau in SAP. Stock transfers, allocations, project reservations, and 3PL coordination, working closely with procurement, sales, and external partners to keep everything on track.',
         'Built the Customer Level Forecasting tool and a Python pipeline that replaced the legacy PSI Tool import process. Cut data processing from hours to minutes and gave the team back time for actual analysis.',
-        'Partner with procurement and sales to ship Power BI dashboards, Excel/VBA automation, and Python reporting. Manual reporting is down by about a quarter, and people now look at the dashboards instead of asking for spreadsheets.',
-        'Run cost-benefit analyses and scenario plans behind procurement decisions. Led inventory audits and master-data validation across three distribution centres for senior stakeholders.',
+        'Partnered with procurement and sales to ship Power BI dashboards, Excel/VBA automation, and Python reporting. Manual reporting dropped by about a quarter, and the team reaches for dashboards instead of asking for spreadsheets.',
+        'Ran cost-benefit analyses and scenario plans behind procurement decisions. Led inventory audits and master-data validation across three distribution centres for senior stakeholders.',
       ],
     },
     {
@@ -94,7 +106,7 @@ const data = {
       name: 'Previa',
       subtitle: 'AI Financial Intelligence Platform',
       role: 'Co-Founder',
-      description: 'AI platform that reconciles receipts for small businesses at 90%+ accuracy. Co-founded and shipped end to end — product, engineering, and go-to-market.',
+      description: 'AI platform that reconciles receipts for small businesses at 90%+ accuracy. Co-founded and shipped end to end, owning product, engineering, and go-to-market.',
       tech: 'React · TypeScript · Supabase · Python · LLMs',
       link: 'https://github.com/demigod97/Previa-2.0',
       linkLabel: 'View on GitHub',
@@ -103,7 +115,7 @@ const data = {
       name: 'GymBro',
       subtitle: 'AI-Powered Fitness App',
       role: 'Solo Developer',
-      description: "Offline-first mobile fitness app, solo build on React Native and Expo. Most of the implementation came from agentic AI under my direction — the workflow itself is the project.",
+      description: "Offline-first mobile fitness app, solo build on React Native and Expo. Most of the implementation came from agentic AI under my direction. The workflow itself is the project.",
       tech: 'React Native · Expo · TypeScript · SQLite · Zustand · Firebase',
       link: 'https://github.com/Mainulll/Gymbro-App',
       linkLabel: 'View on GitHub',
@@ -121,7 +133,7 @@ const data = {
   education: {
     degree: 'Bachelor of Information Technology and Bachelor of Commerce (Double Degree)',
     institution: 'Monash University',
-    period: 'Jul 2022 – Nov 2026 (expected)',
+    period: 'Jul 2022 – Dec 2026 (expected)',
     majors: 'Business Analytics · Cybersecurity',
     coursework: 'Coursework: machine learning, econometrics, statistical modelling, data visualisation, database systems, risk management.',
     highlights: [
@@ -137,10 +149,10 @@ const data = {
       description: "Self-funded founder. We partner with institutions in Sri Lanka to deliver educational supplies to children without access. I run the volunteer team and own programme delivery end to end.",
     },
     {
-      title: 'Officer',
+      title: 'Member',
       org: 'Australian Air League',
       period: '2014 – Present',
-      description: 'Eleven-plus years of youth leadership in aviation and civic education within a defence-aligned organisation. Mentored cadets and coordinated squadron operations.',
+      description: '11+ years of youth leadership in aviation and civic education within a defence-aligned organisation. Mentored cadets and coordinated squadron operations.',
     },
     {
       title: 'Basketball Coach',
@@ -176,6 +188,8 @@ function useTheme() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('theme', theme)
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (meta) meta.setAttribute('content', theme === 'dark' ? '#060611' : '#fafafa')
   }, [theme])
 
   const toggle = () => {
@@ -336,7 +350,10 @@ function Nav() {
 /* ── Hero ─────────────────────────────────────────────────────────── */
 function Hero() {
   const reduce = useReducedMotion()
-  const baseDelay = reduce ? 0 : 1.35 // start after boot overlay clears
+  // First load in a session: delays start after the boot overlay clears.
+  // Repeat loads: boot is skipped, so run a quick compressed cascade.
+  const playBoot = shouldPlayBoot()
+  const t = (x) => (reduce ? 0 : playBoot ? 1.35 + x : x * 0.25)
 
   return (
     <section id="top" className="container hero">
@@ -344,7 +361,7 @@ function Hero() {
         className="hero-eyebrow mono"
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: baseDelay, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.4, delay: t(0), ease: [0.22, 1, 0.36, 1] }}
       >
         <span className="hero-pulse" aria-hidden="true" />
         {data.location} · v2026.1
@@ -354,7 +371,7 @@ function Hero() {
         className="term-window hero-term"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: baseDelay + 0.1, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.5, delay: t(0.1), ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="term-titlebar">
           <div className="term-dots"><span /><span /><span /></div>
@@ -362,23 +379,30 @@ function Hero() {
           <div className="term-tab mono">~ /</div>
         </div>
         <div className="term-body mono">
-          <HeroLine delay={baseDelay + 0.30} prompt>whoami</HeroLine>
-          <HeroLine delay={baseDelay + 0.55} kind="name">{data.name}</HeroLine>
+          <HeroLine delay={t(0.30)} prompt>whoami</HeroLine>
+          <HeroLine delay={t(0.55)} kind="name">{data.name}</HeroLine>
 
-          <HeroLine delay={baseDelay + 0.85} prompt>cat ~/about.md</HeroLine>
-          <HeroLine delay={baseDelay + 1.10} kind="bio">
-            I'm a <em>people-focused</em> problem solver who turns complex technical ideas into clear, digestible information. I build <em>longstanding</em> business relationships that deliver real outcomes for everyone involved — calm under ambiguity, reliable over the line, with a soft spot for the unglamorous process improvements that quietly compound.
+          <HeroLine delay={t(0.85)} prompt>cat ~/role.txt</HeroLine>
+          <HeroLine delay={t(1.10)} kind="role">
+            Customer Success <span className="hero-at">@</span> Aphex
+            <span className="hero-sep">·</span>
+            Final-year student at Monash
           </HeroLine>
 
-          <HeroLine delay={baseDelay + 1.60} prompt>ls ~/links/</HeroLine>
-          <HeroLine delay={baseDelay + 1.85} kind="links">
+          <HeroLine delay={t(1.45)} prompt>cat ~/about.md</HeroLine>
+          <HeroLine delay={t(1.70)} kind="bio">
+            I'm a <em>people-focused</em> problem solver who turns complex technical ideas into clear, digestible information. I build <em>longstanding</em> business relationships that deliver real outcomes for everyone involved. Calm under ambiguity, reliable over the line, with a soft spot for the unglamorous process improvements that quietly compound.
+          </HeroLine>
+
+          <HeroLine delay={t(2.20)} prompt>ls ~/links/</HeroLine>
+          <HeroLine delay={t(2.45)} kind="links">
             <a href={data.contact.linkedin} target="_blank" rel="noopener noreferrer">linkedin</a>
             <a href={data.contact.github} target="_blank" rel="noopener noreferrer">github</a>
             <a href={`mailto:${data.contact.email}`}>email</a>
             <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf">resume.pdf</a>
           </HeroLine>
 
-          <HeroLine delay={baseDelay + 2.25} prompt cursor />
+          <HeroLine delay={t(2.85)} prompt cursor />
         </div>
       </motion.div>
 
@@ -386,7 +410,7 @@ function Hero() {
         className="hero-cta-row"
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, delay: baseDelay + 2.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.45, delay: t(3.0), ease: [0.22, 1, 0.36, 1] }}
       >
         <a href={data.resumePdf} download="Minul_Lokuliyana_Resume.pdf" className="btn btn-primary">
           Download resume
@@ -567,7 +591,7 @@ function Writing() {
       {posts.length === 0 ? (
         <FadeUp delay={0.05}>
           <p className="post-empty mono">
-            <span className="post-empty-prompt">$</span> ls ~/writing/ <span className="post-empty-arrow">→</span> (empty) — first post coming soon
+            <span className="post-empty-prompt">$</span> ls ~/writing/ <span className="post-empty-arrow">→</span> (empty), first post coming soon
           </p>
         </FadeUp>
       ) : (

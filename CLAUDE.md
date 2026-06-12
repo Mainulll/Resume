@@ -5,8 +5,8 @@
 - framer-motion for UI animation
 - react-router-dom for client-side routing
 - react-markdown + remark-gfm + rehype-highlight for blog posts
-- gray-matter for frontmatter parsing
-- highlight.js for code syntax highlighting
+- gray-matter for frontmatter parsing (build-time RSS only; the client uses a tiny custom parser)
+- highlight.js for code syntax highlighting (five registered languages, post-page chunk only)
 - Custom CSS tokens (electric / terminal palette, Geist + JetBrains Mono)
 
 ## Commands
@@ -25,6 +25,7 @@
 - src/components/WritingIndex.jsx (chronological /writing index)
 - src/components/NotFound.jsx (terminal-styled 404)
 - src/lib/posts.js (markdown loader)
+- src/lib/boot.js (once-per-session gate for the boot animation)
 - src/content/posts/ (markdown blog posts, YYYY-MM-DD-slug.md)
 - scripts/new-post.mjs (authoring CLI)
 - vercel.json (SPA rewrites + headers)
